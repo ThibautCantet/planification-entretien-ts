@@ -1,8 +1,8 @@
 import { app } from '../../src/server';
-const request = require('supertest');
 import tutorialRepository from '../../src/repositories/candidat.repository';
 import Candidat from '../../src/models/candidat.model';
-import { Request } from 'express';
+
+const request = require('supertest');
 
 describe("Candidat", () => {
 
@@ -11,6 +11,7 @@ describe("Candidat", () => {
     });
 
     it("Un candidat est crée quand toutes ses informations sont complètes", async () => {
+
         // when
         const response = await request(app)
             .post('/api/candidat')
@@ -128,5 +129,18 @@ describe("Candidat", () => {
         expect(response.body[0].langage).toEqual("java");
         expect(response.body[0].email).toEqual("candidat@mail.com");
         expect(response.body[0].xp).toEqual(5);
+    });
+
+
+    it("Delete un candidat", async () => {
+        // when
+        const response = await request(app)
+            .delete('/api/candidat/1');
+
+        // then
+        expect(response.statusCode).toBe(200);
+
+        const candidats = await tutorialRepository.retrieveAll({});
+        expect(candidats.length).toBe(0);
     });
 });

@@ -1,7 +1,9 @@
 import { Op } from "sequelize";
 import Candidat from '../models/candidat.model';
+import { TrainBookingResult } from './train-booking.result';
+import { Result } from './result';
 
-interface ITutorialRepository {
+export interface ITutorialRepository {
   save(candidat: Candidat): Promise<Candidat>;
   retrieveAll(searchParams: {email: string}): Promise<Candidat[]>;
   retrieveById(tutorialId: number): Promise<Candidat | null>;
@@ -14,7 +16,7 @@ interface SearchCondition {
   [key: string]: any;
 }
 
-class CandidatRepository implements ITutorialRepository {
+export class CandidatRepository implements ITutorialRepository {
   async save(candidat: Candidat): Promise<Candidat> {
     try {
       return await Candidat.create({

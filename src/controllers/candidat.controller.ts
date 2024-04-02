@@ -1,11 +1,14 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import Candidat from '../models/candidat.model';
-import candidatRepository from '../repositories/candidat.repository';
+import { ITutorialRepository } from '../repositories/candidat.repository';
 
 export default class CandidatController {
+  constructor(private readonly repository: ITutorialRepository) {
+  }
+
   async create(req: Request, res: Response) {
 
-    var isEmailValid:boolean;
+    let isEmailValid:boolean;
 
     const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -23,7 +26,7 @@ export default class CandidatController {
     try {
       const candidat: Candidat = req.body;
 
-      const savedCandidat = await candidatRepository.save(candidat);
+      const savedCandidat = await this.repository.save(candidat);
 
       res.status(201).send(savedCandidat);
     } catch (err) {
@@ -37,7 +40,7 @@ export default class CandidatController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const candidats = await candidatRepository.retrieveAll({ email: langage });
+      const candidats = await this.repository.retrieveAll({ email: langage });
 
       res.status(200).send(candidats);
     } catch (err) {
@@ -51,7 +54,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const candidat = await candidatRepository.retrieveById(id);
+      const candidat = await this.repository.retrieveById(id);
 
       if (candidat) res.status(200).send(candidat);
       else
@@ -70,7 +73,7 @@ export default class CandidatController {
     candidat.id = parseInt(req.params.id);
 
     try {
-      const num = await candidatRepository.update(candidat);
+      const num = await this.repository.update(candidat);
 
       if (num == 1) {
         res.send({
@@ -92,7 +95,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await candidatRepository.delete(id);
+      const num = await this.repository.delete(id);
 
       if (num == 1) {
         res.send({
@@ -112,7 +115,7 @@ export default class CandidatController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await candidatRepository.deleteAll();
+      const num = await this.repository.deleteAll();
 
       res.send({ message: `${num} Tutorials were deleted successfully!` });
     } catch (err) {
