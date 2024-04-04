@@ -11,8 +11,6 @@ export default class CandidatController {
 
     isEmailValid = regexp.test(req.body.email);
 
-    console.log(isEmailValid)
-
     if (!req.body.langage || !req.body.xp || req.body.xp < 0 || !req.body.email || !isEmailValid) {
       res.status(400).send({
         message: "Content can not be empty!"
@@ -73,11 +71,11 @@ export default class CandidatController {
       const num = await candidatRepository.update(candidat);
 
       if (num == 1) {
-        res.send({
+        res.status(204).send({
           message: "Candidat was updated successfully."
         });
       } else {
-        res.send({
+        res.status(404).send({
           message: `Cannot update Candidat with id=${candidat.id}. Maybe Candidat was not found or req.body is empty!`
         });
       }
@@ -95,11 +93,11 @@ export default class CandidatController {
       const num = await candidatRepository.delete(id);
 
       if (num == 1) {
-        res.send({
+        res.status(204).send({
           message: "Candidat was deleted successfully!"
         });
       } else {
-        res.send({
+        res.status(404).send({
           message: `Cannot delete Candidat with id=${id}. Maybe Candidat was not found!`,
         });
       }
@@ -114,7 +112,7 @@ export default class CandidatController {
     try {
       const num = await candidatRepository.deleteAll();
 
-      res.send({ message: `${num} Candidats were deleted successfully!` });
+      res.status(204).send({ message: `${num} Candidats were deleted successfully!` });
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while removing all candidats."

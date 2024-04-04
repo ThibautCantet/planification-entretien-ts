@@ -33,7 +33,10 @@ class CandidatRepository {
 
   async retrieveById(candidatId: number): Promise<Candidat | null> {
     try {
-      return await Candidat.findByPk(candidatId);
+      let condition: SearchCondition = {};
+      condition.id = { [Op.eq]: candidatId};
+      const candidat = await Candidat.findOne({ where: condition});
+      return candidat;
     } catch (error) {
       throw new Error("Failed to retrieve Candidats!");
     }
