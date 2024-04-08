@@ -1,15 +1,25 @@
 import { Request, Response } from "express";
 import { Candidat } from '../../domain/candidat.domain';
 import candidatRepository from '../repositories/candidat.repository';
-import { CandidatService } from '../../use_case/candidat.service';
+import { SupprimerTousLesCandidats } from '../../use_case/candidat.toutsupprimer';
+import { CreerCandidat } from '../../use_case/candidat.creer';
+import { ListerCandidats } from '../../use_case/candidat.lister';
+import { TrouverCandidat } from '../../use_case/candidat.trouver';
+import { MettreAJourCandidat } from '../../use_case/candidat.mettreajour';
+import { SupprimerCandidat } from '../../use_case/candidat.supprimer';
 
 export default class CandidatController {
-  candidatService: CandidatService = new CandidatService(candidatRepository)
+  creerCandidat: CreerCandidat = new CreerCandidat(candidatRepository);
+  listerCandidat: ListerCandidats = new ListerCandidats(candidatRepository);
+  trouverCandidat: TrouverCandidat = new TrouverCandidat(candidatRepository);
+  majCandidat: MettreAJourCandidat = new MettreAJourCandidat(candidatRepository);
+  supprimerCandidat: SupprimerCandidat = new SupprimerCandidat(candidatRepository);
+  supprimerTousLesCandidats: SupprimerTousLesCandidats = new SupprimerTousLesCandidats(candidatRepository);
 
   async create(req: Request, res: Response) {
     try {
       const candidat: Candidat = req.body;
-      const resultat = await this.candidatService.save(candidat);
+      const resultat = await this.creerCandidat.execute(candidat);
 
       if (resultat.code === 'ok') {
         res.status(201).send(resultat.candidat);
@@ -28,7 +38,7 @@ export default class CandidatController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const candidats = await this.candidatService.retrieveAll({ email: langage });
+      const candidats = await this.listerCandidat.execute({ email: langage });
 
       res.status(200).send(candidats);
     } catch (err) {
@@ -42,7 +52,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const candidat = await this.candidatService.retrieveById(id);
+      const candidat = await this.trouverCandidat.execute(id);
 
       if (candidat) res.status(200).send(candidat);
       else
@@ -61,7 +71,7 @@ export default class CandidatController {
     candidat.id = parseInt(req.params.id);
 
     try {
-      const num = await this.candidatService.update(candidat);
+      const num = await this.majCandidat.execute(candidat);
 
       if (num == 1) {
         res.status(204).send({
@@ -83,7 +93,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await this.candidatService.delete(id);
+      const num = await this.supprimerCandidat.execute(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -103,7 +113,7 @@ export default class CandidatController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await this.candidatService.deleteAll();
+      const num = await this.supprimerTousLesCandidats.execute();
 
       res.status(204).send({ message: `${num} Candidats were deleted successfully!` });
     } catch (err) {

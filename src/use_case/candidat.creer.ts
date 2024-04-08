@@ -1,12 +1,12 @@
 import { Candidat } from '../domain/candidat.domain';
 import { ICandidatRepository } from './icandidat.repository';
 
-export class CandidatService {
+export class CreerCandidat {
 
     constructor(private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async save(candidat: Candidat) {
+    async execute(candidat: Candidat) {
         let isEmailValid: boolean;
 
         const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -26,25 +26,5 @@ export class CandidatService {
             code: 'ok',
             candidat: savedCandidat
         };
-    }
-
-    async retrieveAll(searchParams: { email?: string }): Promise<Candidat[]> {
-        return await this.candidatRepository.retrieveAll(searchParams);
-    }
-
-    async retrieveById(candidatId: number): Promise<Candidat | null> {
-        return await this.candidatRepository.retrieveById(candidatId);
-    }
-
-    async update(candidat: Candidat): Promise<number> {
-        return await this.candidatRepository.update(candidat);
-    }
-
-    async delete(candidatId: number): Promise<number> {
-        return await this.candidatRepository.delete(candidatId);
-    }
-
-    async deleteAll(): Promise<number> {
-        return await this.candidatRepository.deleteAll();
     }
 }
