@@ -1,7 +1,7 @@
 import Entretien from '../models/entretien.model';
-import { IEntretienRepository } from '../../use_case/IEntretienRepository';
+import { IEntretienRepository } from '../../use_case/ientretien.repository';
 
-class EntretienRepository {
+class EntretienRepository implements IEntretienRepository {
   async save(entretien: Entretien): Promise<Entretien> {
     try {
       return await Entretien.create({
@@ -10,7 +10,7 @@ class EntretienRepository {
         horaire: entretien.horaire
       });
     } catch (err) {
-      throw new Error("Failed to create Entretien!");
+      throw new Error('Failed to create Entretien!');
     }
   }
 
@@ -18,7 +18,7 @@ class EntretienRepository {
     try {
       return await Entretien.findAll();
     } catch (error) {
-      throw new Error("Failed to retrieve Entretiens!");
+      throw new Error('Failed to retrieve Entretiens!');
     }
   }
 
@@ -26,32 +26,32 @@ class EntretienRepository {
     try {
       return await Entretien.findByPk(entretienId);
     } catch (error) {
-      throw new Error("Failed to retrieve Entretiens!");
+      throw new Error('Failed to retrieve Entretiens!');
     }
   }
 
   async update(entretien: Entretien): Promise<number> {
-    const { id,  horaire } = entretien;
+    const {id, horaire} = entretien;
 
     try {
       const affectedRows = await Entretien.update(
-        { horaire: horaire },
-        { where: { id: id } }
+          {horaire: horaire},
+          {where: {id: id}}
       );
 
       return affectedRows[0];
     } catch (error) {
-      throw new Error("Failed to update Entretien!");
+      throw new Error('Failed to update Entretien!');
     }
   }
 
   async delete(entretienId: number): Promise<number> {
     try {
-      const affectedRows = await Entretien.destroy({ where: { id: entretienId } });
+      const affectedRows = await Entretien.destroy({where: {id: entretienId}});
 
       return affectedRows;
     } catch (error) {
-      throw new Error("Failed to delete Entretien!");
+      throw new Error('Failed to delete Entretien!');
     }
   }
 
@@ -62,7 +62,7 @@ class EntretienRepository {
         truncate: false
       });
     } catch (error) {
-      throw new Error("Failed to delete Entretiens!");
+      throw new Error('Failed to delete Entretiens!');
     }
   }
 }
