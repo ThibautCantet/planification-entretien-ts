@@ -1,11 +1,12 @@
-import { Op } from "sequelize";
+import { Op } from 'sequelize';
 import Candidat from '../models/candidat.model';
+import { ICandidatRepository } from '../../use_case/icandidat.repository';
 
 interface SearchCondition {
   [key: string]: any;
 }
 
-class CandidatRepository {
+class CandidatRepository implements ICandidatRepository {
   async save(candidat: Candidat): Promise<Candidat> {
     try {
       return await Candidat.create({
@@ -14,56 +15,56 @@ class CandidatRepository {
         published: candidat.xp
       });
     } catch (err) {
-      throw new Error("Failed to create Candidat!");
+      throw new Error('Failed to create Candidat!');
     }
   }
 
-  async retrieveAll(searchParams: {email?: string}): Promise<Candidat[]> {
+  async retrieveAll(searchParams: { email?: string }): Promise<Candidat[]> {
     try {
       let condition: SearchCondition = {};
 
       if (searchParams?.email)
-        condition.email = { [Op.iLike]: `%${searchParams.email}%` };
+        condition.email = {[Op.iLike]: `%${searchParams.email}%`};
 
-      return await Candidat.findAll({ where: condition });
+      return await Candidat.findAll({where: condition});
     } catch (error) {
-      throw new Error("Failed to retrieve Candidats!");
+      throw new Error('Failed to retrieve Candidats!');
     }
   }
 
   async retrieveById(candidatId: number): Promise<Candidat | null> {
     try {
       let condition: SearchCondition = {};
-      condition.id = { [Op.eq]: candidatId};
-      const candidat = await Candidat.findOne({ where: condition});
+      condition.id = {[Op.eq]: candidatId};
+      const candidat = await Candidat.findOne({where: condition});
       return candidat;
     } catch (error) {
-      throw new Error("Failed to retrieve Candidats!");
+      throw new Error('Failed to retrieve Candidats!');
     }
   }
 
   async update(candidat: Candidat): Promise<number> {
-    const { id, langage, email, xp } = candidat;
+    const {id, langage, email, xp} = candidat;
 
     try {
       const affectedRows = await Candidat.update(
-        { langage: langage, email: email, xp: xp },
-        { where: { id: id } }
+          {langage: langage, email: email, xp: xp},
+          {where: {id: id}}
       );
 
       return affectedRows[0];
     } catch (error) {
-      throw new Error("Failed to update Candidat!");
+      throw new Error('Failed to update Candidat!');
     }
   }
 
   async delete(candidatId: number): Promise<number> {
     try {
-      const affectedRows = await Candidat.destroy({ where: { id: candidatId } });
+      const affectedRows = await Candidat.destroy({where: {id: candidatId}});
 
       return affectedRows;
     } catch (error) {
-      throw new Error("Failed to delete Candidat!");
+      throw new Error('Failed to delete Candidat!');
     }
   }
 
@@ -74,7 +75,7 @@ class CandidatRepository {
         truncate: false
       });
     } catch (error) {
-      throw new Error("Failed to delete Candidats!");
+      throw new Error('Failed to delete Candidats!');
     }
   }
 }

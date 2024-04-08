@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import Candidat from '../../models/candidat.model';
-import candidatService from '../../use_case/candidat.service';
+import candidatRepository from '../repositories/candidat.repository';
+import { CandidatService } from '../../use_case/candidat.service';
 
 export default class CandidatController {
+  candidatService: CandidatService = new CandidatService(candidatRepository)
+
   async create(req: Request, res: Response) {
     try {
-      const savedCandidat = await candidatService.save(req, res);
+      const savedCandidat = await this.candidatService.save(req, res);
 
       res.status(201).send(savedCandidat);
     } catch (err) {
@@ -19,7 +22,7 @@ export default class CandidatController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const candidats = await candidatService.retrieveAll({ email: langage });
+      const candidats = await this.candidatService.retrieveAll({ email: langage });
 
       res.status(200).send(candidats);
     } catch (err) {
@@ -33,7 +36,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const candidat = await candidatService.retrieveById(id);
+      const candidat = await this.candidatService.retrieveById(id);
 
       if (candidat) res.status(200).send(candidat);
       else
@@ -52,7 +55,7 @@ export default class CandidatController {
     candidat.id = parseInt(req.params.id);
 
     try {
-      const num = await candidatService.update(candidat);
+      const num = await this.candidatService.update(candidat);
 
       if (num == 1) {
         res.status(204).send({
@@ -74,7 +77,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await candidatService.delete(id);
+      const num = await this.candidatService.delete(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -94,7 +97,7 @@ export default class CandidatController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await candidatService.deleteAll();
+      const num = await this.candidatService.deleteAll();
 
       res.status(204).send({ message: `${num} Candidats were deleted successfully!` });
     } catch (err) {
