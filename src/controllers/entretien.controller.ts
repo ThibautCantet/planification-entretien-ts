@@ -1,56 +1,12 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 import Entretien from '../models/entretien.model';
 import entretienService from '../services/entretien.service';
-import recruteurService from '../services/recruteur.service';
-import candidatService from '../services/candidat.service';
+import entretienRepository from '../repositories/entretien.repository';
 
 export default class EntretienController {
   async create(req: Request, res: Response) {
-
-    if (req.body.disponibiliteRecruteur != req.body.horaire) {
-      res.status(400).send({
-        message: "Pas les mêmes horaires!"
-      });
-      return;
-    }
-
-    const recruteur = await recruteurService.retrieveById(req.body.recruteurId);
-    const candidat = await candidatService.retrieveById(req.body.candidatId);
-
-    if (!candidat) {
-      res.status(404).send({
-        message: `Cannot create Entretien with candidat id=${req.body.candidatId}.`
-      });
-      return;
-    }
-
-    if (!recruteur) {
-      res.status(404).send({
-        message: `Cannot create Entretien with recruteur id=${req.body.recruteurId}.`
-      });
-      return;
-    }
-
-    if (recruteur?.langage && candidat?.langage && recruteur.langage != candidat.langage) {
-      res.status(400).send({
-        message: "Pas la même techno"
-      });
-      return;
-    }
-
-    if (recruteur?.xp && candidat?.xp && recruteur.xp < candidat.xp) {
-      res.status(400).send({
-        message: "Recruteur trop jeune"
-      });
-      return;
-    }
-
     try {
-      const entretien: Entretien = req.body;
-
-      const savedEntretien = await entretienService.save(entretien);
-
-      res.status(201).send(savedEntretien);
+      return entretienService.create(req, res);
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while creating entretiens."
@@ -60,7 +16,7 @@ export default class EntretienController {
 
   async findAll(req: Request, res: Response) {
     try {
-      const entretiens = await entretienService.retrieveAll();
+      const entretiens = await entretienRepository.retrieveAll();
 
       res.status(200).send(entretiens);
     } catch (err) {
@@ -74,7 +30,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const entretien = await entretienService.retrieveById(id);
+      const entretien = await entretienRepository.retrieveById(id);
 
       if (entretien) res.status(200).send(entretien);
       else
@@ -93,7 +49,7 @@ export default class EntretienController {
     entretien.id = parseInt(req.params.id);
 
     try {
-      const num = await entretienService.update(entretien);
+      const num = await entretienRepository.update(entretien);
 
       if (num == 1) {
         res.status(204).send({
@@ -115,7 +71,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await entretienService.delete(id);
+      const num = await entretienRepository.delete(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -135,7 +91,7 @@ export default class EntretienController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await entretienService.deleteAll();
+      const num = await entretienRepository.deleteAll();
 
       res.status(204).send({ message: `${num} Entretiens were deleted successfully!` });
     } catch (err) {

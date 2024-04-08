@@ -1,30 +1,55 @@
+import recruteurRepository from '../repositories/recruteur.repository';
+import candidatRepository from '../repositories/candidat.repository';
+import { Request, Response } from 'express';
 import Entretien from '../models/entretien.model';
-import recruteurRepository from '../repositories/entretien.repository';
+import entretienRepository from '../repositories/entretien.repository';
 
 class EntretienService {
 
-    async save(entretien: Entretien): Promise<Entretien> {
-        return await recruteurRepository.save(entretien);
-    }
+    async create(req: Request, res: Response) {
+        if (req.body.disponibiliteRecruteur != req.body.horaire) {
+            res.status(400).send({
+                message: "Pas les mêmes horaires!"
+            });
+            return;
+        }
 
-    async retrieveAll(): Promise<Entretien[]> {
-        return await recruteurRepository.retrieveAll();
-    }
+        const recruteur = await recruteurRepository.retrieveById(req.body.recruteurId);
+        const candidat = await candidatRepository.retrieveById(req.body.candidatId);
 
-    async retrieveById(recruteurId: number): Promise<Entretien | null> {
-        return await recruteurRepository.retrieveById(recruteurId);
-    }
+        if (!candidat) {
+            res.status(404).send({
+                message: `Cannot create Entretien with candidat id=${req.body.candidatId}.`
+            });
+            return;
+        }
 
-    async update(entretien: Entretien): Promise<number> {
-        return await recruteurRepository.update(entretien);
-    }
+        if (!recruteur) {
+            res.status(404).send({
+                message: `Cannot create Entretien with recruteur id=${req.body.recruteurId}.`
+            });
+            return;
+        }
 
-    async delete(recruteurId: number): Promise<number> {
-        return await recruteurRepository.delete(recruteurId);
-    }
+        if (recruteur.langage && candidat?.langage && recruteur.langage != candidat.langage) {
+            res.status(400).send({
+                message: "Pas la même techno"
+            });
+            return;
+        }
 
-    async deleteAll(): Promise<number> {
-        return await recruteurRepository.deleteAll();
+        if (recruteur?.xp && candidat?.xp && recruteur.xp < candidat.xp) {
+            res.status(400).send({
+                message: "Recruteur trop jeune"
+            });
+            return;
+        }
+
+        const entretien: Entretien = req.body;
+
+        const savedEntretien = await entretienRepository.save(entretien);
+
+        res.status(201).send(savedEntretien);
     }
 }
 
