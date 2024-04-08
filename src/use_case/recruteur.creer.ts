@@ -1,11 +1,11 @@
 import { IRecruteurRepository } from './irecruteur.repository';
 import { Recruteur } from '../domain/recruteur.domain';
 
-export class RecruteurService {
+export class CreerRecruteur {
     constructor(private readonly recruteurRepository: IRecruteurRepository) {
     }
 
-    async save(recruteur: Recruteur) {
+    async execute(recruteur: Recruteur) {
         let isEmailValid: boolean;
 
         const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
@@ -25,25 +25,5 @@ export class RecruteurService {
             code: 'ok',
             recruteur: savedRecruteur
         };
-    }
-
-    async retrieveAll(searchParams: { email?: string }): Promise<Recruteur[]> {
-        return await this.recruteurRepository.retrieveAll(searchParams);
-    }
-
-    async retrieveById(recruteurId: number): Promise<Recruteur | null> {
-        return await this.recruteurRepository.retrieveById(recruteurId);
-    }
-
-    async update(recruteur: Recruteur): Promise<number> {
-        return await this.recruteurRepository.update(recruteur);
-    }
-
-    async delete(recruteurId: number): Promise<number> {
-        return await this.recruteurRepository.delete(recruteurId);
-    }
-
-    async deleteAll(): Promise<number> {
-        return await this.recruteurRepository.deleteAll();
     }
 }
