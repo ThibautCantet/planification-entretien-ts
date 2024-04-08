@@ -1,11 +1,12 @@
-import { Op } from "sequelize";
+import { Op } from 'sequelize';
 import Recruteur from '../models/recruteur.model';
+import { IRecruteurRepository } from '../../use_case/irecruteur.repository';
 
 interface SearchCondition {
   [key: string]: any;
 }
 
-class RecruteurRepository {
+class RecruteurRepository implements IRecruteurRepository {
   async save(recruteur: Recruteur): Promise<Recruteur> {
     try {
       return await Recruteur.create({
@@ -14,20 +15,20 @@ class RecruteurRepository {
         published: recruteur.xp
       });
     } catch (err) {
-      throw new Error("Failed to create Recruteur!");
+      throw new Error('Failed to create Recruteur!');
     }
   }
 
-  async retrieveAll(searchParams: {email?: string}): Promise<Recruteur[]> {
+  async retrieveAll(searchParams: { email?: string }): Promise<Recruteur[]> {
     try {
       let condition: SearchCondition = {};
 
       if (searchParams?.email)
-        condition.email = { [Op.iLike]: `%${searchParams.email}%` };
+        condition.email = {[Op.iLike]: `%${searchParams.email}%`};
 
-      return await Recruteur.findAll({ where: condition });
+      return await Recruteur.findAll({where: condition});
     } catch (error) {
-      throw new Error("Failed to retrieve Recruteurs!");
+      throw new Error('Failed to retrieve Recruteurs!');
     }
   }
 
@@ -35,32 +36,32 @@ class RecruteurRepository {
     try {
       return await Recruteur.findByPk(recruteurId);
     } catch (error) {
-      throw new Error("Failed to retrieve Recruteurs!");
+      throw new Error('Failed to retrieve Recruteurs!');
     }
   }
 
   async update(recruteur: Recruteur): Promise<number> {
-    const { id, langage, email, xp } = recruteur;
+    const {id, langage, email, xp} = recruteur;
 
     try {
       const affectedRows = await Recruteur.update(
-        { langage: langage, email: email, xp: xp },
-        { where: { id: id } }
+          {langage: langage, email: email, xp: xp},
+          {where: {id: id}}
       );
 
       return affectedRows[0];
     } catch (error) {
-      throw new Error("Failed to update Recruteur!");
+      throw new Error('Failed to update Recruteur!');
     }
   }
 
   async delete(recruteurId: number): Promise<number> {
     try {
-      const affectedRows = await Recruteur.destroy({ where: { id: recruteurId } });
+      const affectedRows = await Recruteur.destroy({where: {id: recruteurId}});
 
       return affectedRows;
     } catch (error) {
-      throw new Error("Failed to delete Recruteur!");
+      throw new Error('Failed to delete Recruteur!');
     }
   }
 
@@ -71,7 +72,7 @@ class RecruteurRepository {
         truncate: false
       });
     } catch (error) {
-      throw new Error("Failed to delete Recruteurs!");
+      throw new Error('Failed to delete Recruteurs!');
     }
   }
 }
