@@ -1,7 +1,7 @@
 import { app } from '../../src/server';
 const request = require('supertest');
 import recruteurRepository from '../../src/infrastructure/repositories/recruteur.repository';
-import Recruteur from '../../src/infrastructure/models/recruteur.model';
+import SqlRecruteur from '../../src/infrastructure/models/recruteur.model';
 
 describe("Recruteur", () => {
 
@@ -102,7 +102,7 @@ describe("Recruteur", () => {
 
     it("Trouve un recruteur existant", async () => {
         // given
-        const {id} = await Recruteur.create({langage: "java", email: "recruteur-existant@mail.com", xp: 5});
+        const {id} = await SqlRecruteur.create({langage: "java", email: "recruteur-existant@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -129,7 +129,7 @@ describe("Recruteur", () => {
 
     it("Supprime un recruteur existant", async () => {
         // given
-        const {id} = await Recruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
+        const {id} = await SqlRecruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -153,7 +153,7 @@ describe("Recruteur", () => {
 
     it("Met à jour un recruteur existant", async () => {
         // given
-        const {id} = await Recruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
+        const {id} = await SqlRecruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -183,7 +183,7 @@ describe("Recruteur", () => {
 
     it("Retourne tous les recruteurs", async () => {
         // given
-        await Recruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
+        await SqlRecruteur.create({langage: "java", email: "recruteur@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -198,7 +198,7 @@ describe("Recruteur", () => {
 
     it("Supprime tous les recruteurs", async () => {
         // given
-        await Recruteur.create({langage: "java", email: "recruteur-a-supprimer@mail.com", xp: 5});
+        await SqlRecruteur.create({langage: "java", email: "recruteur-a-supprimer@mail.com", xp: 5});
 
         // when
         const response = await request(app)
