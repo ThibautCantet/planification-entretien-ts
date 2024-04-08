@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import Candidat from '../models/candidat.model';
-import candidatService from '../services/candidat.service';
+import Candidat from '../../models/candidat.model';
+import candidatService from '../../use_case/candidat.service';
 
 export default class CandidatController {
   async create(req: Request, res: Response) {
