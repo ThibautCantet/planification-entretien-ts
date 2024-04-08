@@ -1,13 +1,15 @@
-import recruteurRepository from '../infrastructure/repositories/recruteur.repository';
-import candidatRepository from '../infrastructure/repositories/candidat.repository';
 import { Request, Response } from 'express';
 import notificationService from './notification.service';
 import { IEntretienRepository } from './ientretien.repository';
 import { Entretien } from '../domain/entretien.domain';
+import { IRecruteurRepository } from './irecruteur.repository';
+import { ICandidatRepository } from './icandidat.repository';
 
 export class EntretienService {
 
-    constructor(private readonly entretienRepository: IEntretienRepository) {
+    constructor(private readonly entretienRepository: IEntretienRepository,
+                private readonly recruteurRepository: IRecruteurRepository,
+                private readonly candidatRepository: ICandidatRepository) {
     }
 
     async create(req: Request, res: Response) {
@@ -18,8 +20,8 @@ export class EntretienService {
             return;
         }
 
-        const recruteur = await recruteurRepository.retrieveById(req.body.recruteurId);
-        const candidat = await candidatRepository.retrieveById(req.body.candidatId);
+        const recruteur = await this.recruteurRepository.retrieveById(req.body.recruteurId);
+        const candidat = await this.candidatRepository.retrieveById(req.body.candidatId);
 
         if (!candidat) {
             res.status(404).send({

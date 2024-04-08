@@ -2,9 +2,12 @@ import { Request, Response } from 'express';
 import entretienRepository from '../repositories/entretien.repository';
 import { EntretienService } from '../../use_case/entretien.service';
 import { Entretien } from '../../domain/entretien.domain';
+import recruteurRepository from '../repositories/recruteur.repository';
+import candidatRepository from '../repositories/candidat.repository';
 
 export default class EntretienController {
-  entretienService = new EntretienService(entretienRepository);
+  entretienService = new EntretienService(entretienRepository,
+      recruteurRepository, candidatRepository);
 
   async create(req: Request, res: Response) {
     try {
