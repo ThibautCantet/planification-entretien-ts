@@ -1,18 +1,20 @@
 import { Request, Response } from 'express';
 import entretienRepository from '../repositories/entretien.repository';
-import { Creation, EntretienService } from '../../use_case/entretien.service';
+import { Creation, CreerEntretien } from '../../use_case/entretien.creer';
 import { Entretien } from '../../domain/entretien.domain';
 import recruteurRepository from '../repositories/recruteur.repository';
 import candidatRepository from '../repositories/candidat.repository';
+import { ListerEntretien } from '../../use_case/entretien.lister';
 
 export default class EntretienController {
-  entretienService = new EntretienService(entretienRepository,
+  creerEntretien = new CreerEntretien(entretienRepository,
       recruteurRepository, candidatRepository);
+  listerEntretien = new ListerEntretien(entretienRepository);
 
   async create(req: Request, res: Response) {
     try {
       const entretien: Entretien = req.body;
-      const resultat = await this.entretienService.create(entretien, req.body.disponibiliteRecruteur, req.body.horaire);
+      const resultat = await this.creerEntretien.execute(entretien, req.body.disponibiliteRecruteur, req.body.horaire);
       switch (resultat.code) {
         case Creation.CANDIDAT_PAS_TROUVE:
         case Creation.RECRUTEUR_PAS_TROUVE:
@@ -34,7 +36,7 @@ export default class EntretienController {
 
   async findAll(req: Request, res: Response) {
     try {
-      const entretiens = await this.entretienService.retrieveAll();
+      const entretiens = await this.listerEntretien.execute();
 
       res.status(200).send(entretiens);
     } catch (err) {
