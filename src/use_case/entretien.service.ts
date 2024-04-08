@@ -1,9 +1,16 @@
-import { Request, Response } from 'express';
 import notificationService from './notification.service';
 import { IEntretienRepository } from './ientretien.repository';
 import { Entretien } from '../domain/entretien.domain';
 import { IRecruteurRepository } from './irecruteur.repository';
 import { ICandidatRepository } from './icandidat.repository';
+
+export enum Creation {
+    HORAIRE,
+    CANDIDAT_PAS_TROUVE,
+    RECRUTEUR_PAS_TROUVE,
+    PAS_COMPATIBLE,
+    OK,
+}
 
 export class EntretienService {
 
@@ -12,53 +19,54 @@ export class EntretienService {
                 private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async create(req: Request, res: Response) {
-        if (req.body.disponibiliteRecruteur != req.body.horaire) {
-            res.status(400).send({
+    async create(entretien: Entretien, disponibiliteRecruteur: string, horaire: string) {
+        if (disponibiliteRecruteur != horaire) {
+            return {
+                code: Creation.HORAIRE,
                 message: "Pas les mêmes horaires!"
-            });
-            return;
+            };
         }
 
-        const recruteur = await this.recruteurRepository.retrieveById(req.body.recruteurId);
-        const candidat = await this.candidatRepository.retrieveById(req.body.candidatId);
+        const recruteur = await this.recruteurRepository.retrieveById(entretien.recruteurId);
+        const candidat = await this.candidatRepository.retrieveById(entretien.candidatId);
 
         if (!candidat) {
-            res.status(404).send({
-                message: `Cannot create Entretien with candidat id=${req.body.candidatId}.`
-            });
-            return;
+            return {
+                code: Creation.CANDIDAT_PAS_TROUVE,
+                message: `Cannot create Entretien with candidat id=${entretien.candidatId}.`
+            };
         }
 
         if (!recruteur) {
-            res.status(404).send({
-                message: `Cannot create Entretien with recruteur id=${req.body.recruteurId}.`
-            });
-            return;
+            return {
+                code: Creation.RECRUTEUR_PAS_TROUVE,
+                message: `Cannot create Entretien with recruteur id=${entretien.recruteurId}.`
+            };
         }
 
         if (recruteur.langage && candidat?.langage && recruteur.langage != candidat.langage) {
-            res.status(400).send({
+            return {
+                code: Creation.PAS_COMPATIBLE,
                 message: "Pas la même techno"
-            });
-            return;
+            };
         }
 
         if (recruteur?.xp && candidat?.xp && recruteur.xp < candidat.xp) {
-            res.status(400).send({
+            return {
+                code: Creation.PAS_COMPATIBLE,
                 message: "Recruteur trop jeune"
-            });
-            return;
+            };
         }
-
-        const entretien: Entretien = req.body;
 
         const savedEntretien = await this.entretienRepository.save(entretien);
 
         await notificationService.envoyerEmailDeConfirmationAuCandidat(candidat?.email || '');
         await notificationService.envoyerEmailDeConfirmationAuRecruteur(recruteur?.email || '');
 
-        res.status(201).send(savedEntretien);
+        return {
+            code: Creation.OK,
+            entretien: savedEntretien
+        };
     }
 
     async retrieveAll(): Promise<Entretien[]> {
