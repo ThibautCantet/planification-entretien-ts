@@ -1,5 +1,5 @@
 import Candidat from '../models/candidat.model';
-import candidatRepository from '../repositories/candidat.repository';
+import candidatRepository from '../infrastructure/repositories/candidat.repository';
 import { Request, Response } from 'express';
 
 class CandidatService {

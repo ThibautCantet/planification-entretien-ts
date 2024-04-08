@@ -1,7 +1,7 @@
 import { app } from '../../src/server';
 const request = require('supertest');
-import recruteurRepository from '../../src/repositories/recruteur.repository';
-import Recruteur from '../../src/models/recruteur.model';
+import recruteurRepository from '../../src/infrastructure/repositories/recruteur.repository';
+import Recruteur from '../../src/infrastructure/models/recruteur.model';
 
 describe("Recruteur", () => {
 

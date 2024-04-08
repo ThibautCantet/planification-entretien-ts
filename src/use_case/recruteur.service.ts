@@ -1,5 +1,5 @@
-import Recruteur from '../models/recruteur.model';
-import recruteurRepository from '../repositories/recruteur.repository';
+import Recruteur from '../infrastructure/models/recruteur.model';
+import recruteurRepository from '../infrastructure/repositories/recruteur.repository';
 import { Request, Response } from 'express';
 
 class RecruteurService {

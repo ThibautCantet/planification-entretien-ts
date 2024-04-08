@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Recruteur from '../models/recruteur.model';
-import recruteurService from '../services/recruteur.service';
+import recruteurService from '../../use_case/recruteur.service';
 
 export default class RecruteurController {
   async create(req: Request, res: Response) {
