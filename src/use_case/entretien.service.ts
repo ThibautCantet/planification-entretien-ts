@@ -1,9 +1,9 @@
 import recruteurRepository from '../infrastructure/repositories/recruteur.repository';
 import candidatRepository from '../infrastructure/repositories/candidat.repository';
 import { Request, Response } from 'express';
-import Entretien from '../infrastructure/models/entretien.model';
 import notificationService from './notification.service';
 import { IEntretienRepository } from './ientretien.repository';
+import { Entretien } from '../domain/entretien.domain';
 
 export class EntretienService {
 

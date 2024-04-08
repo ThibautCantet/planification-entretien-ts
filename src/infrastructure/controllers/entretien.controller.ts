@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import Entretien from '../models/entretien.model';
 import entretienRepository from '../repositories/entretien.repository';
 import { EntretienService } from '../../use_case/entretien.service';
+import { Entretien } from '../../domain/entretien.domain';
 
 export default class EntretienController {
   entretienService = new EntretienService(entretienRepository);

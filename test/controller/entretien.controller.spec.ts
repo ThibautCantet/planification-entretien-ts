@@ -1,6 +1,6 @@
 import { app } from '../../src/server';
 import entretienRepository from '../../src/infrastructure/repositories/entretien.repository';
-import Entretien from '../../src/infrastructure/models/entretien.model';
+import SqlEntretien from '../../src/infrastructure/models/entretien.model';
 import SqlCandidat from '../../src/infrastructure/models/candidat.model';
 import SqlRecruteur from '../../src/infrastructure/models/recruteur.model';
 import candidatRepository from '../../src/infrastructure/repositories/candidat.repository';
@@ -218,7 +218,7 @@ describe('Entretien', () => {
         const recruteur = await SqlRecruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
         const recruteurId = recruteur.id;
 
-        const {id} = await Entretien.create({
+        const {id} = await SqlEntretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
             horaire: '2024-05-31T18:00:00.000Z'
@@ -252,7 +252,7 @@ describe('Entretien', () => {
         const recruteur = await SqlRecruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
         const recruteurId = recruteur.id;
 
-        const {id} = await Entretien.create({
+        const {id} = await SqlEntretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
             horaire: '2024-05-31T18:00:00.000Z'
@@ -285,7 +285,7 @@ describe('Entretien', () => {
 
         const recruteur = await SqlRecruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
         const recruteurId = recruteur.id;
-        const {id} = await Entretien.create({
+        const {id} = await SqlEntretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
             horaire: '2024-05-31T18:00:00.000Z'
@@ -325,7 +325,7 @@ describe('Entretien', () => {
         const recruteur = await SqlRecruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
         const recruteurId = recruteur.id;
 
-        await Entretien.create({
+        await SqlEntretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
             horaire: '2024-05-31T18:00:00.000Z'
@@ -350,7 +350,7 @@ describe('Entretien', () => {
         const recruteur = await SqlRecruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
         const recruteurId = recruteur.id;
 
-        await Entretien.create({
+        await SqlEntretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
             horaire: '2024-05-31T18:00:00.000Z'
