@@ -55,6 +55,10 @@ class EntretienService {
 
         res.status(201).send(savedEntretien);
     }
+
+    async retrieveAll(): Promise<Entretien[]> {
+        return await entretienRepository.retrieveAll();
+    }
 }
 
 export default new EntretienService();

@@ -17,7 +17,7 @@ export default class EntretienController {
 
   async findAll(req: Request, res: Response) {
     try {
-      const entretiens = await entretienRepository.retrieveAll();
+      const entretiens = await entretienService.retrieveAll();
 
       res.status(200).send(entretiens);
     } catch (err) {
