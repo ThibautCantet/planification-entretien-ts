@@ -1,4 +1,4 @@
-import notificationService from './notification.service';
+import { INotificationService } from './inotification.service';
 import { IEntretienRepository } from './ientretien.repository';
 import { Entretien } from '../domain/entretien.domain';
 import { IRecruteurRepository } from './irecruteur.repository';
@@ -16,7 +16,8 @@ export class CreerEntretien {
 
     constructor(private readonly entretienRepository: IEntretienRepository,
                 private readonly recruteurRepository: IRecruteurRepository,
-                private readonly candidatRepository: ICandidatRepository) {
+                private readonly candidatRepository: ICandidatRepository,
+                private readonly notification: INotificationService) {
     }
 
     async execute(entretien: Entretien, disponibiliteRecruteur: string, horaire: string) {
@@ -60,8 +61,8 @@ export class CreerEntretien {
 
         const savedEntretien = await this.entretienRepository.save(entretien);
 
-        await notificationService.envoyerEmailDeConfirmationAuCandidat(candidat?.email || '');
-        await notificationService.envoyerEmailDeConfirmationAuRecruteur(recruteur?.email || '');
+        await this.notification.envoyerEmailDeConfirmationAuCandidat(candidat?.email || '');
+        await this.notification.envoyerEmailDeConfirmationAuRecruteur(recruteur?.email || '');
 
         return {
             code: Creation.OK,
