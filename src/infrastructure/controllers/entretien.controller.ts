@@ -5,11 +5,19 @@ import { Entretien } from '../../domain/entretien.domain';
 import recruteurRepository from '../repositories/recruteur.repository';
 import candidatRepository from '../repositories/candidat.repository';
 import { ListerEntretien } from '../../use_case/entretien.lister';
+import { TrouverEntretien } from '../../use_case/entretien.trouver';
+import { MettreAJourEntretien } from '../../use_case/entretien.mettreajour';
+import { SupprimerEntretien } from '../../use_case/entretien.supprimer';
+import { SupprimerTousLesEntretiens } from '../../use_case/entretien.toutsupprimer';
 
 export default class EntretienController {
   creerEntretien = new CreerEntretien(entretienRepository,
       recruteurRepository, candidatRepository);
   listerEntretien = new ListerEntretien(entretienRepository);
+  trouverEntretien: TrouverEntretien = new TrouverEntretien(entretienRepository);
+  majEntretien: MettreAJourEntretien = new MettreAJourEntretien(entretienRepository);
+  supprimerEntretien: SupprimerEntretien = new SupprimerEntretien(entretienRepository);
+  supprimerTousLesEntretiens: SupprimerTousLesEntretiens = new SupprimerTousLesEntretiens(entretienRepository);
 
   async create(req: Request, res: Response) {
     try {
@@ -50,7 +58,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const entretien = await entretienRepository.retrieveById(id);
+      const entretien = await this.trouverEntretien.execute(id);
 
       if (entretien) res.status(200).send(entretien);
       else
@@ -69,7 +77,7 @@ export default class EntretienController {
     entretien.id = parseInt(req.params.id);
 
     try {
-      const num = await entretienRepository.update(entretien);
+      const num = await this.majEntretien.execute(entretien);
 
       if (num == 1) {
         res.status(204).send({
@@ -91,7 +99,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await entretienRepository.delete(id);
+      const num = await this.supprimerEntretien.execute(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -111,7 +119,7 @@ export default class EntretienController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await entretienRepository.deleteAll();
+      const num = await this.supprimerTousLesEntretiens.execute();
 
       res.status(204).send({ message: `${num} Entretiens were deleted successfully!` });
     } catch (err) {
