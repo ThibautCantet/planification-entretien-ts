@@ -3,7 +3,7 @@ import { Model, Table, Column, DataType } from "sequelize-typescript";
 @Table({
   tableName: "candidats",
 })
-export default class Candidat extends Model {
+export default class SqlCandidat extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,

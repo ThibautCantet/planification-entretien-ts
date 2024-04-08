@@ -1,6 +1,6 @@
 import { app } from '../../src/server';
 import candidatRepository from '../../src/infrastructure/repositories/candidat.repository';
-import Candidat from '../../src/infrastructure/models/candidat.model';
+import SqlCandidat from '../../src/infrastructure/models/candidat.model';
 
 const request = require('supertest');
 
@@ -104,7 +104,7 @@ describe("Candidat", () => {
 
     it("Trouve un candidat existant", async () => {
         // given
-        const {id} = await Candidat.create({langage: "java", email: "candidat-existant@mail.com", xp: 5});
+        const {id} = await SqlCandidat.create({langage: "java", email: "candidat-existant@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -131,7 +131,7 @@ describe("Candidat", () => {
 
     it("Supprime un candidat existant", async () => {
         // given
-        const {id} = await Candidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        const {id} = await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -155,7 +155,7 @@ describe("Candidat", () => {
 
     it("Met à jour un candidat existant", async () => {
         // given
-        const {id} = await Candidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        const {id} = await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -185,7 +185,7 @@ describe("Candidat", () => {
 
     it("Retourne tous les candidats", async () => {
         // given
-        await Candidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -200,7 +200,7 @@ describe("Candidat", () => {
 
     it("Supprime tous les candidats", async () => {
         // given
-        await Candidat.create({langage: "java", email: "candidat-a-supprimer@mail.com", xp: 5});
+        await SqlCandidat.create({langage: "java", email: "candidat-a-supprimer@mail.com", xp: 5});
 
         // when
         const response = await request(app)
