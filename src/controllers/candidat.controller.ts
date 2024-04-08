@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Candidat from '../models/candidat.model';
-import candidatRepository from '../repositories/candidat.repository';
+import candidatService from '../services/candidat.service';
 
 export default class CandidatController {
   async create(req: Request, res: Response) {
@@ -21,7 +21,7 @@ export default class CandidatController {
     try {
       const candidat: Candidat = req.body;
 
-      const savedCandidat = await candidatRepository.save(candidat);
+      const savedCandidat = await candidatService.save(candidat);
 
       res.status(201).send(savedCandidat);
     } catch (err) {
@@ -35,7 +35,7 @@ export default class CandidatController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const candidats = await candidatRepository.retrieveAll({ email: langage });
+      const candidats = await candidatService.retrieveAll({ email: langage });
 
       res.status(200).send(candidats);
     } catch (err) {
@@ -49,7 +49,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const candidat = await candidatRepository.retrieveById(id);
+      const candidat = await candidatService.retrieveById(id);
 
       if (candidat) res.status(200).send(candidat);
       else
@@ -68,7 +68,7 @@ export default class CandidatController {
     candidat.id = parseInt(req.params.id);
 
     try {
-      const num = await candidatRepository.update(candidat);
+      const num = await candidatService.update(candidat);
 
       if (num == 1) {
         res.status(204).send({
@@ -90,7 +90,7 @@ export default class CandidatController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await candidatRepository.delete(id);
+      const num = await candidatService.delete(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -110,7 +110,7 @@ export default class CandidatController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await candidatRepository.deleteAll();
+      const num = await candidatService.deleteAll();
 
       res.status(204).send({ message: `${num} Candidats were deleted successfully!` });
     } catch (err) {

@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Recruteur from '../models/recruteur.model';
-import recruteurRepository from '../repositories/recruteur.repository';
+import recruteurService from '../services/recruteur.service';
 
 export default class RecruteurController {
   async create(req: Request, res: Response) {
@@ -21,7 +21,7 @@ export default class RecruteurController {
     try {
       const recruteur: Recruteur = req.body;
 
-      const savedRecruteur = await recruteurRepository.save(recruteur);
+      const savedRecruteur = await recruteurService.save(recruteur);
 
       res.status(201).send(savedRecruteur);
     } catch (err) {
@@ -35,7 +35,7 @@ export default class RecruteurController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const recruteurs = await recruteurRepository.retrieveAll({ email: langage });
+      const recruteurs = await recruteurService.retrieveAll({ email: langage });
 
       res.status(200).send(recruteurs);
     } catch (err) {
@@ -49,7 +49,7 @@ export default class RecruteurController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const recruteur = await recruteurRepository.retrieveById(id);
+      const recruteur = await recruteurService.retrieveById(id);
 
       if (recruteur) res.status(200).send(recruteur);
       else
@@ -68,7 +68,7 @@ export default class RecruteurController {
     recruteur.id = parseInt(req.params.id);
 
     try {
-      const num = await recruteurRepository.update(recruteur);
+      const num = await recruteurService.update(recruteur);
 
       if (num == 1) {
         res.status(204).send({
@@ -90,7 +90,7 @@ export default class RecruteurController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await recruteurRepository.delete(id);
+      const num = await recruteurService.delete(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -110,7 +110,7 @@ export default class RecruteurController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await recruteurRepository.deleteAll();
+      const num = await recruteurService.deleteAll();
 
       res.status(204).send({ message: `${num} Recruteurs were deleted successfully!` });
     } catch (err) {

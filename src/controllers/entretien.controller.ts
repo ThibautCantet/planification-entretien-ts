@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import Entretien from '../models/entretien.model';
-import entretienRepository from '../repositories/entretien.repository';
-import recruteurRepository from '../repositories/recruteur.repository';
-import candidatRepository from '../repositories/candidat.repository';
+import entretienService from '../services/entretien.service';
+import recruteurService from '../services/recruteur.service';
+import candidatService from '../services/candidat.service';
 
 export default class EntretienController {
   async create(req: Request, res: Response) {
@@ -14,8 +14,8 @@ export default class EntretienController {
       return;
     }
 
-    const recruteur = await recruteurRepository.retrieveById(req.body.recruteurId);
-    const candidat = await candidatRepository.retrieveById(req.body.candidatId);
+    const recruteur = await recruteurService.retrieveById(req.body.recruteurId);
+    const candidat = await candidatService.retrieveById(req.body.candidatId);
 
     if (!candidat) {
       res.status(404).send({
@@ -48,7 +48,7 @@ export default class EntretienController {
     try {
       const entretien: Entretien = req.body;
 
-      const savedEntretien = await entretienRepository.save(entretien);
+      const savedEntretien = await entretienService.save(entretien);
 
       res.status(201).send(savedEntretien);
     } catch (err) {
@@ -62,7 +62,7 @@ export default class EntretienController {
     const recruteurId = typeof req.query.recruteurId === "string" ? parseInt(req.query.recruteurId) : null;
 
     try {
-      const entretiens = await entretienRepository.retrieveAll();
+      const entretiens = await entretienService.retrieveAll();
 
       res.status(200).send(entretiens);
     } catch (err) {
@@ -76,7 +76,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const entretien = await entretienRepository.retrieveById(id);
+      const entretien = await entretienService.retrieveById(id);
 
       if (entretien) res.status(200).send(entretien);
       else
@@ -95,7 +95,7 @@ export default class EntretienController {
     entretien.id = parseInt(req.params.id);
 
     try {
-      const num = await entretienRepository.update(entretien);
+      const num = await entretienService.update(entretien);
 
       if (num == 1) {
         res.status(204).send({
@@ -117,7 +117,7 @@ export default class EntretienController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await entretienRepository.delete(id);
+      const num = await entretienService.delete(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -137,7 +137,7 @@ export default class EntretienController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await entretienRepository.deleteAll();
+      const num = await entretienService.deleteAll();
 
       res.status(204).send({ message: `${num} Entretiens were deleted successfully!` });
     } catch (err) {
