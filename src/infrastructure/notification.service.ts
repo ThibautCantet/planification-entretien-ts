@@ -1,4 +1,6 @@
-class NotificationService {
+import { INotificationService } from '../use_case/inotification.service';
+
+class NotificationService implements INotificationService {
 
     async envoyerEmailDeConfirmationAuCandidat(email: string) {
         return Promise.resolve(true);

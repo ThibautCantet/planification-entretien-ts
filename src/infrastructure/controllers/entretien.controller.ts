@@ -9,10 +9,11 @@ import { TrouverEntretien } from '../../use_case/entretien.trouver';
 import { MettreAJourEntretien } from '../../use_case/entretien.mettreajour';
 import { SupprimerEntretien } from '../../use_case/entretien.supprimer';
 import { SupprimerTousLesEntretiens } from '../../use_case/entretien.toutsupprimer';
+import notificationService from '../notification.service';
 
 export default class EntretienController {
   creerEntretien = new CreerEntretien(entretienRepository,
-      recruteurRepository, candidatRepository);
+      recruteurRepository, candidatRepository, notificationService);
   listerEntretien = new ListerEntretien(entretienRepository);
   trouverEntretien: TrouverEntretien = new TrouverEntretien(entretienRepository);
   majEntretien: MettreAJourEntretien = new MettreAJourEntretien(entretienRepository);
