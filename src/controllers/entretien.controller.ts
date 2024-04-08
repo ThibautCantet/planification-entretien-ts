@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import Entretien from '../models/entretien.model';
 import entretienService from '../services/entretien.service';
 import entretienRepository from '../repositories/entretien.repository';
+import notificationService from '../services/notification.service';
 
 export default class EntretienController {
   async create(req: Request, res: Response) {

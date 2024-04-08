@@ -3,6 +3,7 @@ import candidatRepository from '../repositories/candidat.repository';
 import { Request, Response } from 'express';
 import Entretien from '../models/entretien.model';
 import entretienRepository from '../repositories/entretien.repository';
+import notificationService from './notification.service';
 
 class EntretienService {
 
@@ -48,6 +49,9 @@ class EntretienService {
         const entretien: Entretien = req.body;
 
         const savedEntretien = await entretienRepository.save(entretien);
+
+        await notificationService.envoyerEmailDeConfirmationAuCandidat(candidat?.email || '');
+        await notificationService.envoyerEmailDeConfirmationAuRecruteur(recruteur?.email || '');
 
         res.status(201).send(savedEntretien);
     }

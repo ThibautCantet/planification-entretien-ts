@@ -5,10 +5,13 @@ import Candidat from '../../src/models/candidat.model';
 import Recruteur from '../../src/models/recruteur.model';
 import candidatRepository from '../../src/repositories/candidat.repository';
 import recruteurRepository from '../../src/repositories/recruteur.repository';
+import notificationService from '../../src/services/notification.service';
 
 const request = require('supertest');
 
 describe('Entretien', () => {
+    const envoyerEmailAuCandidatMock = jest.spyOn(notificationService, 'envoyerEmailDeConfirmationAuCandidat');
+    const envoyerEmailAuRecruteurMock = jest.spyOn(notificationService, 'envoyerEmailDeConfirmationAuRecruteur');
 
     afterAll(async () => {
         await candidatRepository.deleteAll();
@@ -18,6 +21,8 @@ describe('Entretien', () => {
 
     beforeEach(async () => {
         await entretienRepository.deleteAll();
+        envoyerEmailAuCandidatMock.mockReset();
+        envoyerEmailAuRecruteurMock.mockReset();
     });
 
     it('Un entretien est crée quand toutes ses informations sont complètes', async () => {
@@ -44,6 +49,9 @@ describe('Entretien', () => {
 
         const entretien = await entretienRepository.retrieveById(response.body.id);
         expect(entretien).not.toBeNull();
+
+        expect(envoyerEmailAuCandidatMock).toHaveBeenCalledWith('candidat-valide@mail.com');
+        expect(envoyerEmailAuRecruteurMock).toHaveBeenCalledWith('recruteur-valide@mail.com');
     });
 
     it('Recruteur ne peut pas tester le candidat car les dates ne correspondent pas', async () => {
@@ -75,6 +83,9 @@ describe('Entretien', () => {
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
+
+        expect(envoyerEmailAuCandidatMock).not.toHaveBeenCalled();
+        expect(envoyerEmailAuRecruteurMock).not.toHaveBeenCalled();
     });
 
     it('Recruteur ne peut pas tester le candidat car les techno ne correspondent pas', async () => {
@@ -106,6 +117,9 @@ describe('Entretien', () => {
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
+
+        expect(envoyerEmailAuCandidatMock).not.toHaveBeenCalled();
+        expect(envoyerEmailAuRecruteurMock).not.toHaveBeenCalled();
     });
 
     it('Recruteur ne peut pas tester le candidat car le recruteur est moins expérimenté', async () => {
@@ -137,6 +151,9 @@ describe('Entretien', () => {
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
+
+        expect(envoyerEmailAuCandidatMock).not.toHaveBeenCalled();
+        expect(envoyerEmailAuRecruteurMock).not.toHaveBeenCalled();
     });
 
     it('Impossible de créer un entretien quand le candidat n existe pas', async () => {
@@ -161,6 +178,9 @@ describe('Entretien', () => {
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
+
+        expect(envoyerEmailAuCandidatMock).not.toHaveBeenCalled();
+        expect(envoyerEmailAuRecruteurMock).not.toHaveBeenCalled();
     });
 
     it('Impossible de créer un entretien quand le recruteur n existe pas', async () => {
@@ -185,6 +205,9 @@ describe('Entretien', () => {
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
+
+        expect(envoyerEmailAuCandidatMock).not.toHaveBeenCalled();
+        expect(envoyerEmailAuRecruteurMock).not.toHaveBeenCalled();
     });
 
     it("Trouve un entretien existant", async () => {
