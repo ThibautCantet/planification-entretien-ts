@@ -1,14 +1,16 @@
-import Entretien from '../models/entretien.model';
+import SqlEntretien from '../models/entretien.model';
 import { IEntretienRepository } from '../../use_case/ientretien.repository';
+import { Entretien } from '../../domain/entretien.domain';
 
 class EntretienRepository implements IEntretienRepository {
   async save(entretien: Entretien): Promise<Entretien> {
     try {
-      return await Entretien.create({
+      const { id } = await SqlEntretien.create({
         candidatId: entretien.candidatId,
         recruteurId: entretien.recruteurId,
         horaire: entretien.horaire
       });
+      return new Entretien(id || 0, entretien.horaire, entretien.candidatId, entretien.recruteurId);
     } catch (err) {
       throw new Error('Failed to create Entretien!');
     }
@@ -16,7 +18,13 @@ class EntretienRepository implements IEntretienRepository {
 
   async retrieveAll(): Promise<Entretien[]> {
     try {
-      return await Entretien.findAll();
+      const sqlEntretiens = await SqlEntretien.findAll();
+
+      let entretiens = [];
+      for (let i = 0; i < sqlEntretiens.length; i++) {
+        entretiens.push(new Entretien(sqlEntretiens[i].id || 0, sqlEntretiens[i].horaire || '', sqlEntretiens[i].candidatId || 0, sqlEntretiens[i].recruteurId || 0))
+      }
+      return entretiens;
     } catch (error) {
       throw new Error('Failed to retrieve Entretiens!');
     }
@@ -24,7 +32,11 @@ class EntretienRepository implements IEntretienRepository {
 
   async retrieveById(entretienId: number): Promise<Entretien | null> {
     try {
-      return await Entretien.findByPk(entretienId);
+      const entretien = await SqlEntretien.findByPk(entretienId);
+      if (entretien) {
+        return new Entretien(entretienId, entretien?.horaire || '', entretien?.candidatId || 0, entretien?.recruteurId || 0);
+      }
+      return null;
     } catch (error) {
       throw new Error('Failed to retrieve Entretiens!');
     }
@@ -34,7 +46,7 @@ class EntretienRepository implements IEntretienRepository {
     const {id, horaire} = entretien;
 
     try {
-      const affectedRows = await Entretien.update(
+      const affectedRows = await SqlEntretien.update(
           {horaire: horaire},
           {where: {id: id}}
       );
@@ -47,7 +59,7 @@ class EntretienRepository implements IEntretienRepository {
 
   async delete(entretienId: number): Promise<number> {
     try {
-      const affectedRows = await Entretien.destroy({where: {id: entretienId}});
+      const affectedRows = await SqlEntretien.destroy({where: {id: entretienId}});
 
       return affectedRows;
     } catch (error) {
@@ -57,7 +69,7 @@ class EntretienRepository implements IEntretienRepository {
 
   async deleteAll(): Promise<number> {
     try {
-      return Entretien.destroy({
+      return SqlEntretien.destroy({
         where: {},
         truncate: false
       });
