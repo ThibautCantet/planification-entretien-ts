@@ -59,8 +59,6 @@ export default class EntretienController {
   }
 
   async findAll(req: Request, res: Response) {
-    const recruteurId = typeof req.query.recruteurId === "string" ? parseInt(req.query.recruteurId) : null;
-
     try {
       const entretiens = await entretienService.retrieveAll();
 
