@@ -1,4 +1,4 @@
-import Candidat from '../models/candidat.model';
+import { Candidat } from '../domain/candidat.domain';
 import { ICandidatRepository } from './icandidat.repository';
 import { Request, Response } from 'express';
 

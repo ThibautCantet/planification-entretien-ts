@@ -1,19 +1,21 @@
 import { Op } from 'sequelize';
-import Candidat from '../models/candidat.model';
+import SqlCandidat from '../models/candidat.model';
+import { Candidat } from '../../domain/candidat.domain';
 import { ICandidatRepository } from '../../use_case/icandidat.repository';
 
 interface SearchCondition {
   [key: string]: any;
 }
 
-class CandidatRepository implements ICandidatRepository {
+class SQLCandidatRepository implements ICandidatRepository {
   async save(candidat: Candidat): Promise<Candidat> {
     try {
-      return await Candidat.create({
+      const { id } =  await SqlCandidat.create({
         title: candidat.langage,
         description: candidat.email,
         published: candidat.xp
       });
+      return new Candidat(id || 0, candidat.langage, candidat.email, candidat.xp);
     } catch (err) {
       throw new Error('Failed to create Candidat!');
     }
@@ -26,7 +28,12 @@ class CandidatRepository implements ICandidatRepository {
       if (searchParams?.email)
         condition.email = {[Op.iLike]: `%${searchParams.email}%`};
 
-      return await Candidat.findAll({where: condition});
+      let candidats = [];
+      const sqlCandidats = await SqlCandidat.findAll<SqlCandidat>({where: condition});
+      for (let i = 0; i < sqlCandidats.length; i++) {
+        candidats.push(new Candidat(sqlCandidats[i].id || 0, sqlCandidats[i].langage || '', sqlCandidats[i].email || '', sqlCandidats[i].xp || 0));
+      }
+      return Promise.resolve(candidats);
     } catch (error) {
       throw new Error('Failed to retrieve Candidats!');
     }
@@ -36,8 +43,11 @@ class CandidatRepository implements ICandidatRepository {
     try {
       let condition: SearchCondition = {};
       condition.id = {[Op.eq]: candidatId};
-      const candidat = await Candidat.findOne({where: condition});
-      return candidat;
+      const candidat = await SqlCandidat.findOne({where: condition});
+      if (candidat) {
+        return new Candidat(candidat?.id || 0, candidat?.langage || "", candidat?.email || "", candidat?.xp || 0);
+      }
+      return null;
     } catch (error) {
       throw new Error('Failed to retrieve Candidats!');
     }
@@ -47,7 +57,7 @@ class CandidatRepository implements ICandidatRepository {
     const {id, langage, email, xp} = candidat;
 
     try {
-      const affectedRows = await Candidat.update(
+      const affectedRows = await SqlCandidat.update(
           {langage: langage, email: email, xp: xp},
           {where: {id: id}}
       );
@@ -60,7 +70,7 @@ class CandidatRepository implements ICandidatRepository {
 
   async delete(candidatId: number): Promise<number> {
     try {
-      const affectedRows = await Candidat.destroy({where: {id: candidatId}});
+      const affectedRows = await SqlCandidat.destroy({where: {id: candidatId}});
 
       return affectedRows;
     } catch (error) {
@@ -70,7 +80,7 @@ class CandidatRepository implements ICandidatRepository {
 
   async deleteAll(): Promise<number> {
     try {
-      return Candidat.destroy({
+      return SqlCandidat.destroy({
         where: {},
         truncate: false
       });
@@ -80,4 +90,4 @@ class CandidatRepository implements ICandidatRepository {
   }
 }
 
-export default new CandidatRepository();
+export default new SQLCandidatRepository();
