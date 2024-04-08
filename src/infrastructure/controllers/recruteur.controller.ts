@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import Recruteur from '../models/recruteur.model';
 import { RecruteurService } from '../../use_case/recruteur.service';
 import recruteurRepository from '../repositories/recruteur.repository';
+import { Recruteur } from '../../domain/recruteur.domain';
 
 export default class RecruteurController {
   recruteurService = new RecruteurService(recruteurRepository)
