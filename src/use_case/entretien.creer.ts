@@ -12,14 +12,14 @@ export enum Creation {
     OK,
 }
 
-export class EntretienService {
+export class CreerEntretien {
 
     constructor(private readonly entretienRepository: IEntretienRepository,
                 private readonly recruteurRepository: IRecruteurRepository,
                 private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async create(entretien: Entretien, disponibiliteRecruteur: string, horaire: string) {
+    async execute(entretien: Entretien, disponibiliteRecruteur: string, horaire: string) {
         if (disponibiliteRecruteur != horaire) {
             return {
                 code: Creation.HORAIRE,
@@ -67,9 +67,5 @@ export class EntretienService {
             code: Creation.OK,
             entretien: savedEntretien
         };
-    }
-
-    async retrieveAll(): Promise<Entretien[]> {
-        return await this.entretienRepository.retrieveAll();
     }
 }
