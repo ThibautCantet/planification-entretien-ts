@@ -4,24 +4,8 @@ import candidatService from '../services/candidat.service';
 
 export default class CandidatController {
   async create(req: Request, res: Response) {
-
-    let isEmailValid:boolean;
-
-    const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-
-    isEmailValid = regexp.test(req.body.email);
-
-    if (!req.body.langage || !req.body.xp || req.body.xp < 0 || !req.body.email || !isEmailValid) {
-      res.status(400).send({
-        message: "Content can not be empty!"
-      });
-      return;
-    }
-
     try {
-      const candidat: Candidat = req.body;
-
-      const savedCandidat = await candidatService.save(candidat);
+      const savedCandidat = await candidatService.save(req, res);
 
       res.status(201).send(savedCandidat);
     } catch (err) {
