@@ -1,9 +1,5 @@
-import { Op } from "sequelize";
 import Entretien from '../models/entretien.model';
-
-interface SearchCondition {
-  [key: string]: any;
-}
+import { IEntretienRepository } from '../../use_case/IEntretienRepository';
 
 class EntretienRepository {
   async save(entretien: Entretien): Promise<Entretien> {
