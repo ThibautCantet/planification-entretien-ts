@@ -8,9 +8,15 @@ export default class CandidatController {
 
   async create(req: Request, res: Response) {
     try {
-      const savedCandidat = await this.candidatService.save(req, res);
+      const candidat: Candidat = req.body;
+      const resultat = await this.candidatService.save(candidat);
 
-      res.status(201).send(savedCandidat);
+      if (resultat.code === 'ok') {
+        res.status(201).send(resultat.candidat);
+        return;
+      }
+
+      res.status(400).send(resultat.message);
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while creating candidats."
