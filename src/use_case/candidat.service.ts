@@ -1,31 +1,31 @@
 import { Candidat } from '../domain/candidat.domain';
 import { ICandidatRepository } from './icandidat.repository';
-import { Request, Response } from 'express';
 
 export class CandidatService {
 
     constructor(private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async save(req: Request, res: Response) {
+    async save(candidat: Candidat) {
         let isEmailValid: boolean;
 
         const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-        isEmailValid = regexp.test(req.body.email);
+        isEmailValid = regexp.test(candidat.email);
 
-        if (!req.body.langage || !req.body.xp || req.body.xp < 0 || !req.body.email || !isEmailValid) {
-            res.status(400).send({
+        if (!candidat.langage || !candidat.xp || candidat.xp < 0 || !candidat.email || !isEmailValid) {
+            return {
+                code: 'invalid',
                 message: 'Content can not be empty!'
-            });
-            return;
+            };
         }
-
-        const candidat: Candidat = req.body;
 
         const savedCandidat = await this.candidatRepository.save(candidat);
 
-        res.status(201).send(savedCandidat);
+        return {
+            code: 'ok',
+            candidat: savedCandidat
+        };
     }
 
     async retrieveAll(searchParams: { email?: string }): Promise<Candidat[]> {
