@@ -1,30 +1,30 @@
 import { IRecruteurRepository } from './irecruteur.repository';
 import { Recruteur } from '../domain/recruteur.domain';
-import { Request, Response } from 'express';
 
 export class RecruteurService {
     constructor(private readonly recruteurRepository: IRecruteurRepository) {
     }
 
-    async save(req: Request, res: Response) {
+    async save(recruteur: Recruteur) {
         let isEmailValid: boolean;
 
         const regexp: RegExp = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-        isEmailValid = regexp.test(req.body.email);
+        isEmailValid = regexp.test(recruteur.email);
 
-        if (!req.body.langage || !req.body.xp || req.body.xp < 0 || !req.body.email || !isEmailValid) {
-            res.status(400).send({
+        if (!recruteur.langage || !recruteur.xp || recruteur.xp < 0 || !recruteur.email || !isEmailValid) {
+            return {
+                code: 'invalid',
                 message: 'Content can not be empty!'
-            });
-            return;
+            };
         }
-
-        const recruteur: Recruteur = req.body;
 
         const savedRecruteur = await this.recruteurRepository.save(recruteur);
 
-        res.status(201).send(savedRecruteur);
+        return {
+            code: 'ok',
+            recruteur: savedRecruteur
+        };
     }
 
     async retrieveAll(searchParams: { email?: string }): Promise<Recruteur[]> {

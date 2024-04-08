@@ -7,9 +7,15 @@ export default class RecruteurController {
   recruteurService = new RecruteurService(recruteurRepository)
   async create(req: Request, res: Response) {
     try {
-      const savedRecruteur = await this.recruteurService.save(req, res);
+      const recruteur: Recruteur = req.body;
+      const resultat = await this.recruteurService.save(recruteur);
 
-      res.status(201).send(savedRecruteur);
+      if (resultat.code === 'ok') {
+        res.status(201).send(resultat.recruteur);
+        return;
+      }
+
+      res.status(400).send(resultat.message);
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while creating recruteurs."
