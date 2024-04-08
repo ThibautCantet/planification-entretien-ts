@@ -1,6 +1,4 @@
 import { app } from '../../src/server';
-
-const request = require('supertest');
 import entretienRepository from '../../src/repositories/entretien.repository';
 import Entretien from '../../src/models/entretien.model';
 import Candidat from '../../src/models/candidat.model';
@@ -8,34 +6,9 @@ import Recruteur from '../../src/models/recruteur.model';
 import candidatRepository from '../../src/repositories/candidat.repository';
 import recruteurRepository from '../../src/repositories/recruteur.repository';
 
+const request = require('supertest');
+
 describe('Entretien', () => {
-
-    let candidatId: number | undefined;
-    let recruteurId: number | undefined;
-    let autreLangageRecruteurId: number | undefined;
-    let tropJeuneRecruteurId: number | undefined;
-
-    beforeAll(async () => {
-        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
-        candidatId = candidat.id;
-
-        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
-        recruteurId = recruteur.id;
-
-        const autreLangageRecruteur = await Recruteur.create({
-            langage: 'C#',
-            email: 'autreLangageRecruteur@mail.com',
-            xp: 5
-        });
-        autreLangageRecruteurId = autreLangageRecruteur.id;
-
-        const tropJeunerecruteur = await Recruteur.create({
-            langage: 'java',
-            email: 'tropJeuneRecruteurId@mail.com',
-            xp: 1
-        });
-        tropJeuneRecruteurId = tropJeunerecruteur.id;
-    });
 
     afterAll(async () => {
         await candidatRepository.deleteAll();
@@ -48,10 +21,10 @@ describe('Entretien', () => {
     });
 
     it('Un entretien est crée quand toutes ses informations sont complètes', async () => {
-        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat-valide@mail.com', xp: 5});
         const localCandidatId = candidat.id;
 
-        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur-valide@mail.com', xp: 5});
         const localRecruteurId = recruteur.id;
 
         // when
@@ -74,6 +47,17 @@ describe('Entretien', () => {
     });
 
     it('Recruteur ne peut pas tester le candidat car les dates ne correspondent pas', async () => {
+        // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({
+            langage: 'C#',
+            email: 'autreLangageRecruteur@mail.com',
+            xp: 5
+        });
+        const recruteurId = recruteur.id;
+
         // when
         const response = await request(app)
             .post('/api/entretien')
@@ -94,6 +78,17 @@ describe('Entretien', () => {
     });
 
     it('Recruteur ne peut pas tester le candidat car les techno ne correspondent pas', async () => {
+        // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const autreLangageRecruteur = await Recruteur.create({
+            langage: 'C#',
+            email: 'autreLangageRecruteur@mail.com',
+            xp: 5
+        });
+        const autreLangageRecruteurId = autreLangageRecruteur.id;
+
         // when
         const response = await request(app)
             .post('/api/entretien')
@@ -114,6 +109,17 @@ describe('Entretien', () => {
     });
 
     it('Recruteur ne peut pas tester le candidat car le recruteur est moins expérimenté', async () => {
+        // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const tropJeunerecruteur = await Recruteur.create({
+            langage: 'java',
+            email: 'tropJeuneRecruteurId@mail.com',
+            xp: 1
+        });
+        const tropJeuneRecruteurId = tropJeunerecruteur.id;
+
         // when
         const response = await request(app)
             .post('/api/entretien')
@@ -134,6 +140,10 @@ describe('Entretien', () => {
     });
 
     it('Impossible de créer un entretien quand le candidat n existe pas', async () => {
+        // given
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
+
         // when
         const response = await request(app)
             .post('/api/entretien')
@@ -147,13 +157,17 @@ describe('Entretien', () => {
             .set('Accept', 'application/json');
 
         // then
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(404);
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
     });
 
     it('Impossible de créer un entretien quand le recruteur n existe pas', async () => {
+        // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
         // when
         const response = await request(app)
             .post('/api/entretien')
@@ -167,33 +181,20 @@ describe('Entretien', () => {
             .set('Accept', 'application/json');
 
         // then
-        expect(response.statusCode).toBe(400);
+        expect(response.statusCode).toBe(404);
 
         const entretiens = await entretienRepository.retrieveAll();
         expect(entretiens.length).toBe(0);
     });
 
-    it('Retourne tous les entretiens', async () => {
-        // given
-        await Entretien.create({
-            candidatId: candidatId,
-            recruteurId: recruteurId,
-            horaire: '2024-05-31T18:00:00.000Z'
-        });
-
-        // when
-        const response = await request(app)
-            .get('/api/entretien');
-
-        // then
-        expect(response.statusCode).toBe(200);
-        expect(response.body[0].candidatId).toEqual(candidatId);
-        expect(response.body[0].recruteurId).toEqual(recruteurId);
-        expect(response.body[0].horaire).toEqual('2024-05-31T18:00:00.000Z');
-    });
-
     it("Trouve un entretien existant", async () => {
         // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
+
         const {id} = await Entretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
@@ -222,6 +223,12 @@ describe('Entretien', () => {
 
     it("Supprime un entretien existant", async () => {
         // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
+
         const {id} = await Entretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
@@ -250,6 +257,11 @@ describe('Entretien', () => {
 
     it("Met à jour un entretien existant", async () => {
         // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
         const {id} = await Entretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
@@ -284,6 +296,12 @@ describe('Entretien', () => {
 
     it("Retourne tous les entretiens", async () => {
         // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
+
         await Entretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,
@@ -303,6 +321,12 @@ describe('Entretien', () => {
 
     it("Supprime tous les entretiens", async () => {
         // given
+        const candidat = await Candidat.create({langage: 'java', email: 'candidat@mail.com', xp: 5});
+        const candidatId = candidat.id;
+
+        const recruteur = await Recruteur.create({langage: 'java', email: 'recruteur@mail.com', xp: 5});
+        const recruteurId = recruteur.id;
+
         await Entretien.create({
             candidatId: candidatId,
             recruteurId: recruteurId,

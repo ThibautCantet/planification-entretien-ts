@@ -18,14 +18,14 @@ export default class EntretienController {
     const candidat = await candidatRepository.retrieveById(req.body.candidatId);
 
     if (!candidat) {
-      res.status(400).send({
+      res.status(404).send({
         message: `Cannot create Entretien with candidat id=${req.body.candidatId}.`
       });
       return;
     }
 
     if (!recruteur) {
-      res.status(400).send({
+      res.status(404).send({
         message: `Cannot create Entretien with recruteur id=${req.body.recruteurId}.`
       });
       return;
