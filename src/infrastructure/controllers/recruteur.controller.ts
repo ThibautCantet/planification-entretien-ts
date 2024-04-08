@@ -1,14 +1,24 @@
 import { Request, Response } from "express";
-import { RecruteurService } from '../../use_case/recruteur.service';
+import { SupprimerTousLesRecruteurs } from '../../use_case/recruteur.toutsupprimer';
 import recruteurRepository from '../repositories/recruteur.repository';
 import { Recruteur } from '../../domain/recruteur.domain';
+import { ListerRecruteurs } from '../../use_case/recruteur.lister';
+import { CreerRecruteur } from '../../use_case/recruteur.creer';
+import { TrouverRecruteur } from '../../use_case/recruteur.trouver';
+import { MettreAJourRecruteur } from '../../use_case/recruteur.mettreajour';
+import { SupprimerRecruteur } from '../../use_case/recruteur.supprimer';
 
 export default class RecruteurController {
-  recruteurService = new RecruteurService(recruteurRepository)
+  creerRecruteur: CreerRecruteur = new CreerRecruteur(recruteurRepository);
+  listerRecruteur: ListerRecruteurs = new ListerRecruteurs(recruteurRepository);
+  trouverRecruteur: TrouverRecruteur = new TrouverRecruteur(recruteurRepository);
+  majRecruteur: MettreAJourRecruteur = new MettreAJourRecruteur(recruteurRepository);
+  supprimerRecruteur: SupprimerRecruteur = new SupprimerRecruteur(recruteurRepository);
+  supprimerTousLesRecruteurs: SupprimerTousLesRecruteurs = new SupprimerTousLesRecruteurs(recruteurRepository);
   async create(req: Request, res: Response) {
     try {
       const recruteur: Recruteur = req.body;
-      const resultat = await this.recruteurService.save(recruteur);
+      const resultat = await this.creerRecruteur.execute(recruteur);
 
       if (resultat.code === 'ok') {
         res.status(201).send(resultat.recruteur);
@@ -27,7 +37,7 @@ export default class RecruteurController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
-      const recruteurs = await this.recruteurService.retrieveAll({ email: langage });
+      const recruteurs = await this.listerRecruteur.execute({ email: langage });
 
       res.status(200).send(recruteurs);
     } catch (err) {
@@ -41,7 +51,7 @@ export default class RecruteurController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const recruteur = await this.recruteurService.retrieveById(id);
+      const recruteur = await this.trouverRecruteur.execute(id);
 
       if (recruteur) res.status(200).send(recruteur);
       else
@@ -60,7 +70,7 @@ export default class RecruteurController {
     recruteur.id = parseInt(req.params.id);
 
     try {
-      const num = await this.recruteurService.update(recruteur);
+      const num = await this.majRecruteur.execute(recruteur);
 
       if (num == 1) {
         res.status(204).send({
@@ -82,7 +92,7 @@ export default class RecruteurController {
     const id: number = parseInt(req.params.id);
 
     try {
-      const num = await this.recruteurService.delete(id);
+      const num = await this.supprimerRecruteur.execute(id);
 
       if (num == 1) {
         res.status(204).send({
@@ -102,7 +112,7 @@ export default class RecruteurController {
 
   async deleteAll(req: Request, res: Response) {
     try {
-      const num = await this.recruteurService.deleteAll();
+      const num = await this.supprimerTousLesRecruteurs.execute();
 
       res.status(204).send({ message: `${num} Recruteurs were deleted successfully!` });
     } catch (err) {
