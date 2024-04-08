@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import Entretien from '../models/entretien.model';
-import entretienService from '../../use_case/entretien.service';
 import entretienRepository from '../repositories/entretien.repository';
+import { EntretienService } from '../../use_case/entretien.service';
 
 export default class EntretienController {
+  entretienService = new EntretienService(entretienRepository);
+
   async create(req: Request, res: Response) {
     try {
-      return entretienService.create(req, res);
+      return this.entretienService.create(req, res);
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while creating entretiens."
@@ -16,7 +18,7 @@ export default class EntretienController {
 
   async findAll(req: Request, res: Response) {
     try {
-      const entretiens = await entretienService.retrieveAll();
+      const entretiens = await this.entretienService.retrieveAll();
 
       res.status(200).send(entretiens);
     } catch (err) {

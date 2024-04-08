@@ -2,10 +2,13 @@ import recruteurRepository from '../infrastructure/repositories/recruteur.reposi
 import candidatRepository from '../infrastructure/repositories/candidat.repository';
 import { Request, Response } from 'express';
 import Entretien from '../infrastructure/models/entretien.model';
-import entretienRepository from '../infrastructure/repositories/entretien.repository';
 import notificationService from './notification.service';
+import { IEntretienRepository } from './ientretien.repository';
 
-class EntretienService {
+export class EntretienService {
+
+    constructor(private readonly entretienRepository: IEntretienRepository) {
+    }
 
     async create(req: Request, res: Response) {
         if (req.body.disponibiliteRecruteur != req.body.horaire) {
@@ -48,7 +51,7 @@ class EntretienService {
 
         const entretien: Entretien = req.body;
 
-        const savedEntretien = await entretienRepository.save(entretien);
+        const savedEntretien = await this.entretienRepository.save(entretien);
 
         await notificationService.envoyerEmailDeConfirmationAuCandidat(candidat?.email || '');
         await notificationService.envoyerEmailDeConfirmationAuRecruteur(recruteur?.email || '');
@@ -57,8 +60,6 @@ class EntretienService {
     }
 
     async retrieveAll(): Promise<Entretien[]> {
-        return await entretienRepository.retrieveAll();
+        return await this.entretienRepository.retrieveAll();
     }
 }
-
-export default new EntretienService();
