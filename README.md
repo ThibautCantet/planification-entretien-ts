@@ -12,10 +12,19 @@ For more detail, please visit:
 ```
 npm install
 ```
+### Run docker
+```bash
+docker compose up
+```
 
 ### Run
 ```
 npm run start
+```
+
+### Test
+```
+npm run test
 ```
 
 Front-end that works well with this Back-end
