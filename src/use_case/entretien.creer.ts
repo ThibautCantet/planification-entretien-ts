@@ -32,6 +32,7 @@ export class CreerEntretien {
         const candidat = await this.candidatRepository.retrieveById(entretien.candidatId);
 
         if (!candidat) {
+            console.log(`Cannot create Entretien with candidat id=${entretien.candidatId}. Candidat not found.`);
             return {
                 code: Creation.CANDIDAT_PAS_TROUVE,
                 message: `Cannot create Entretien with candidat id=${entretien.candidatId}.`
@@ -39,6 +40,7 @@ export class CreerEntretien {
         }
 
         if (!recruteur) {
+            console.log(`Cannot create Entretien with recruteur id=${entretien.recruteurId}. Recruteur not found.`);
             return {
                 code: Creation.RECRUTEUR_PAS_TROUVE,
                 message: `Cannot create Entretien with recruteur id=${entretien.recruteurId}.`

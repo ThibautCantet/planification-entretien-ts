@@ -1,16 +1,33 @@
-import { app } from '../../src/server';
+import { randomPort, start } from '../../src/server';
+
 const request = require('supertest');
 import recruteurRepository from '../../src/infrastructure/repositories/recruteur.repository';
 import SqlRecruteur from '../../src/infrastructure/models/recruteur.model';
+import express, { Application } from "express";
+import Server from '../../src';
+
+let app: Application;
+let srv: any;
 
 describe("Recruteur", () => {
 
+    beforeAll(async () => {
+    });
+
     beforeEach(async () => {
-       await recruteurRepository.deleteAll();
+        await recruteurRepository.deleteAll();
+        app = express();
+        const server = new Server(app);
+        srv = start(app, server, randomPort(8100, 8399));
     });
 
     afterAll(async () => {
        await recruteurRepository.deleteAll();
+    });
+
+    afterEach(async () => {
+       await recruteurRepository.deleteAll();
+       srv.close();
     });
 
     it("Un recruteur est crée quand toutes ses informations sont complètes", async () => {

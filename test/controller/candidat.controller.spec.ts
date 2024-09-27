@@ -1,6 +1,12 @@
-import { app } from '../../src/server';
 import candidatRepository from '../../src/infrastructure/repositories/candidat.repository';
 import SqlCandidat from '../../src/infrastructure/models/candidat.model';
+import { start } from '../../src/server';
+import express, { Application } from "express";
+import Server from '../../src';
+
+const app: Application = express();
+const server: Server = new Server(app);
+const srv = start(app, server, 8081);
 
 const request = require('supertest');
 
@@ -16,6 +22,7 @@ describe("Candidat", () => {
 
     afterAll(async () => {
         await candidatRepository.deleteAll();
+        srv.close();
     });
 
     it("Un candidat est crée quand toutes ses informations sont complètes", async () => {

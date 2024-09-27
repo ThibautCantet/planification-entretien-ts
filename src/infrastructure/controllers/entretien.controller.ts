@@ -26,7 +26,11 @@ export default class EntretienController {
       const resultat = await this.creerEntretien.execute(entretien, req.body.disponibiliteRecruteur, req.body.horaire);
       switch (resultat.code) {
         case Creation.CANDIDAT_PAS_TROUVE:
+          console.log(`CANDIDAT_PAS_TROUVE Cannot create Entretien with candidat id=${entretien.candidatId}. Candidat not found.`);
+          res.status(404).send(resultat.message);
+          break;
         case Creation.RECRUTEUR_PAS_TROUVE:
+          console.log(`RECRUTEUR_PAS_TROUVE Cannot create Entretien with recruteur id=${entretien.recruteurId}. Recruteur not found.`);
           res.status(404).send(resultat.message);
           break;
         case Creation.PAS_COMPATIBLE:
