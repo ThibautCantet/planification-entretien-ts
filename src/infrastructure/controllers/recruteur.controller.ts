@@ -7,10 +7,12 @@ import { CreerRecruteur } from '../../use_case/recruteur.creer';
 import { TrouverRecruteur } from '../../use_case/recruteur.trouver';
 import { MettreAJourRecruteur } from '../../use_case/recruteur.mettreajour';
 import { SupprimerRecruteur } from '../../use_case/recruteur.supprimer';
+import { ListerRecruteursExperimentes } from '../../use_case/recruteur.lister.experimentes';
 
 export default class RecruteurController {
   creerRecruteur: CreerRecruteur = new CreerRecruteur(recruteurRepository);
   listerRecruteur: ListerRecruteurs = new ListerRecruteurs(recruteurRepository);
+  listerRecruteurExperimentes: ListerRecruteursExperimentes = new ListerRecruteursExperimentes(recruteurRepository);
   trouverRecruteur: TrouverRecruteur = new TrouverRecruteur(recruteurRepository);
   majRecruteur: MettreAJourRecruteur = new MettreAJourRecruteur(recruteurRepository);
   supprimerRecruteur: SupprimerRecruteur = new SupprimerRecruteur(recruteurRepository);
@@ -35,11 +37,18 @@ export default class RecruteurController {
 
   async findAll(req: Request, res: Response) {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
+    const type = typeof req.query.type === "string" ? req.query.type : "";
 
     try {
-      const recruteurs = await this.listerRecruteur.execute({ email: langage });
+      if (type) {
+        const experimentes = await this.listerRecruteurExperimentes.execute();
 
-      res.status(200).send(recruteurs);
+        res.status(200).send(experimentes);
+      } else {
+        const recruteurs = await this.listerRecruteur.execute({email: langage});
+
+        res.status(200).send(recruteurs);
+      }
     } catch (err) {
       res.status(500).send({
         message: "Some error occurred while retrieving recruteurs."

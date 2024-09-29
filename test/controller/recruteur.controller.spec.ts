@@ -213,6 +213,24 @@ describe("Recruteur", () => {
         expect(response.body[0].xp).toEqual(5);
     });
 
+    it("Retourne tous les recruteurs expérimentés", async () => {
+        // given
+        await SqlRecruteur.create({langage: "java", email: "recruteur9@mail.com", xp: 9});
+        await SqlRecruteur.create({langage: "java", email: "recruteur10@mail.com", xp: 10});
+        await SqlRecruteur.create({langage: "C#", email: "recruteur11@mail.com", xp: 11});
+
+        // when
+        const response = await request(app)
+            .get('/api/recruteur?type=experimente');
+
+        // then
+        expect(response.statusCode).toBe(200);
+        expect(response.body[0].competence).toEqual("10 ans de java");
+        expect(response.body[0].email).toEqual("recruteur10@mail.com");
+        expect(response.body[1].competence).toEqual("11 ans de C#");
+        expect(response.body[1].email).toEqual("recruteur11@mail.com");
+    });
+
     it("Supprime tous les recruteurs", async () => {
         // given
         await SqlRecruteur.create({langage: "java", email: "recruteur-a-supprimer@mail.com", xp: 5});

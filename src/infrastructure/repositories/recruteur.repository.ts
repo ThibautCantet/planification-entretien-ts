@@ -21,12 +21,16 @@ class RecruteurRepository implements IRecruteurRepository {
     }
   }
 
-  async retrieveAll(searchParams: { email?: string }): Promise<Recruteur[]> {
+  async retrieveAll(searchParams: { email?: string, xp?: number }): Promise<Recruteur[]> {
     try {
       let condition: SearchCondition = {};
 
       if (searchParams?.email)
         condition.email = {[Op.iLike]: `%${searchParams.email}%`};
+
+      if (searchParams?.xp) {
+        condition.xp >= {[Op.gt]: searchParams.xp }
+      }
 
       const sqlRecruteurs = await SqlRecruteur.findAll({where: condition});
       let recruteurs = [];
