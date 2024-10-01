@@ -5,11 +5,11 @@ export interface ICandidatRepository {
 
     retrieveAll(searchParams: { email?: string }): Promise<Candidat[]>;
 
-    retrieveById(candidatId: number): Promise<Candidat | null>;
+    retrieveById(candidatId: String): Promise<Candidat | null>;
 
     update(candidat: Candidat): Promise<number>;
 
-    delete(candidatId: number): Promise<number>;
+    delete(candidatId: String): Promise<number>;
 
     deleteAll(): Promise<number>;
 }

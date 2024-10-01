@@ -19,7 +19,7 @@ export default class SqlEntretien extends Model {
   horaire?: string;
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     field: "candidatId"
   })
   candidatId?: number;

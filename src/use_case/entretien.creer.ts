@@ -29,7 +29,7 @@ export class CreerEntretien {
         }
 
         const recruteur = await this.recruteurRepository.retrieveById(entretien.recruteurId);
-        const candidat = await this.candidatRepository.retrieveById(entretien.candidatId);
+        const candidat = await this.candidatRepository.retrieveById(entretien.candidatId.toString());
 
         if (!candidat) {
             console.log(`Cannot create Entretien with candidat id=${entretien.candidatId}. Candidat not found.`);

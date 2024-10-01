@@ -6,7 +6,7 @@ export class TrouverCandidat {
     constructor(private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async execute(candidatId: number): Promise<Candidat | null> {
+    async execute(candidatId: String): Promise<Candidat | null> {
         return await this.candidatRepository.retrieveById(candidatId);
     }
 }

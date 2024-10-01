@@ -8,6 +8,8 @@ import notificationService from '../../src/infrastructure/notification.service';
 import express, { Application } from 'express';
 import { randomPort, start } from '../../src/server';
 import Server from '../../src';
+import { v4 as uuid } from 'uuid';
+import { Candidat } from '../../src/domain/candidat.domain';
 
 const request = require('supertest');
 
@@ -15,9 +17,7 @@ let appEntretien: Application;
 let srv: any;
 
 export async function createCandidat(params: { langage: string; xp: number; email: string }) {
-    const candidat = await SqlCandidat.create(params);
-    console.log(`Candidat créé: ${candidat.id}`);
-    return candidat;
+    return await candidatRepository.save(new Candidat('', params.langage, params.email, params.xp));
 }
 
 export async function createRecruteur(params: { langage: string; xp: number; email: string }) {

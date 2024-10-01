@@ -49,7 +49,7 @@ export default class CandidatController {
   }
 
   async findOne(req: Request, res: Response) {
-    const id: number = parseInt(req.params.id);
+    const id: String = req.params.id;
 
     try {
       const candidat = await this.trouverCandidat.execute(id);
@@ -68,7 +68,7 @@ export default class CandidatController {
 
   async update(req: Request, res: Response) {
     let candidat: Candidat = req.body;
-    candidat.id = parseInt(req.params.id);
+    candidat.id = req.params.id;
 
     try {
       const num = await this.majCandidat.execute(candidat);
@@ -90,7 +90,7 @@ export default class CandidatController {
   }
 
   async delete(req: Request, res: Response) {
-    const id: number = parseInt(req.params.id);
+    const id: String = req.params.id;
 
     try {
       const num = await this.supprimerCandidat.execute(id);

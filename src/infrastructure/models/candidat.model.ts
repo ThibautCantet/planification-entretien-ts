@@ -5,12 +5,11 @@ import { Model, Table, Column, DataType } from "sequelize-typescript";
 })
 export default class SqlCandidat extends Model {
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING(255),
     primaryKey: true,
-    autoIncrement: true,
     field: "id"
   })
-  id?: number;
+  id?: String;
 
   @Column({
     type: DataType.STRING(255),

@@ -2,6 +2,7 @@ import { Op } from 'sequelize';
 import SqlCandidat from '../models/candidat.model';
 import { Candidat } from '../../domain/candidat.domain';
 import { ICandidatRepository } from '../../use_case/icandidat.repository';
+import { v4 as uuid } from 'uuid';
 
 interface SearchCondition {
   [key: string]: any;
@@ -10,12 +11,14 @@ interface SearchCondition {
 class SQLCandidatRepository implements ICandidatRepository {
   async save(candidat: Candidat): Promise<Candidat> {
     try {
-      const { id } =  await SqlCandidat.create({
-        title: candidat.langage,
-        description: candidat.email,
-        published: candidat.xp
+      const id = uuid();
+      const saved =  await SqlCandidat.create({
+        id: id,
+        langage: candidat.langage,
+        email: candidat.email,
+        xp: candidat.xp
       });
-      return new Candidat(id || 0, candidat.langage, candidat.email, candidat.xp);
+      return new Candidat(id, candidat.langage, candidat.email, candidat.xp);
     } catch (err) {
       throw new Error('Failed to create Candidat!');
     }
@@ -31,7 +34,7 @@ class SQLCandidatRepository implements ICandidatRepository {
       let candidats = [];
       const sqlCandidats = await SqlCandidat.findAll<SqlCandidat>({where: condition});
       for (let i = 0; i < sqlCandidats.length; i++) {
-        candidats.push(new Candidat(sqlCandidats[i].id || 0, sqlCandidats[i].langage || '', sqlCandidats[i].email || '', sqlCandidats[i].xp || 0));
+        candidats.push(new Candidat(sqlCandidats[i].id || '', sqlCandidats[i].langage || '', sqlCandidats[i].email || '', sqlCandidats[i].xp || 0));
       }
       return Promise.resolve(candidats);
     } catch (error) {
@@ -39,13 +42,13 @@ class SQLCandidatRepository implements ICandidatRepository {
     }
   }
 
-  async retrieveById(candidatId: number): Promise<Candidat | null> {
+  async retrieveById(candidatId: String): Promise<Candidat | null> {
     try {
       let condition: SearchCondition = {};
       condition.id = {[Op.eq]: candidatId};
       const candidat = await SqlCandidat.findOne({where: condition});
       if (candidat) {
-        return new Candidat(candidat?.id || 0, candidat?.langage || "", candidat?.email || "", candidat?.xp || 0);
+        return new Candidat(candidat?.id || '', candidat?.langage || "", candidat?.email || "", candidat?.xp || 0);
       }
       return null;
     } catch (error) {
@@ -68,7 +71,7 @@ class SQLCandidatRepository implements ICandidatRepository {
     }
   }
 
-  async delete(candidatId: number): Promise<number> {
+  async delete(candidatId: String): Promise<number> {
     try {
       const affectedRows = await SqlCandidat.destroy({where: {id: candidatId}});
 

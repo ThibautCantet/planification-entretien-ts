@@ -1,14 +1,19 @@
 import candidatRepository from '../../src/infrastructure/repositories/candidat.repository';
-import SqlCandidat from '../../src/infrastructure/models/candidat.model';
 import { start } from '../../src/server';
 import express, { Application } from "express";
 import Server from '../../src';
+import { Candidat } from '../../src/domain/candidat.domain';
 
 const app: Application = express();
 const server: Server = new Server(app);
 const srv = start(app, server, 8081);
 
 const request = require('supertest');
+
+async function createCandidat(params: any) {
+    const {id} = await candidatRepository.save(new Candidat('', params.langage, params.email, params.xp));
+    return id;
+}
 
 describe("Candidat", () => {
 
@@ -111,7 +116,7 @@ describe("Candidat", () => {
 
     it("Trouve un candidat existant", async () => {
         // given
-        const {id} = await SqlCandidat.create({langage: "java", email: "candidat-existant@mail.com", xp: 5});
+        const id = await createCandidat({langage: "java", email: "candidat-existant@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -138,7 +143,7 @@ describe("Candidat", () => {
 
     it("Supprime un candidat existant", async () => {
         // given
-        const {id} = await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        const id = await createCandidat({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -147,7 +152,7 @@ describe("Candidat", () => {
         // then
         expect(response.statusCode).toBe(204);
 
-        const candidat = await candidatRepository.retrieveById(id || 0);
+        const candidat = await candidatRepository.retrieveById(id || '');
         expect(candidat).toBe(null);
     });
 
@@ -162,7 +167,7 @@ describe("Candidat", () => {
 
     it("Met à jour un candidat existant", async () => {
         // given
-        const {id} = await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        const id = await createCandidat({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -192,7 +197,7 @@ describe("Candidat", () => {
 
     it("Retourne tous les candidats", async () => {
         // given
-        await SqlCandidat.create({langage: "java", email: "candidat@mail.com", xp: 5});
+        await createCandidat({langage: "java", email: "candidat@mail.com", xp: 5});
 
         // when
         const response = await request(app)
@@ -207,7 +212,7 @@ describe("Candidat", () => {
 
     it("Supprime tous les candidats", async () => {
         // given
-        await SqlCandidat.create({langage: "java", email: "candidat-a-supprimer@mail.com", xp: 5});
+        await createCandidat({langage: "java", email: "candidat-a-supprimer@mail.com", xp: 5});
 
         // when
         const response = await request(app)

@@ -5,7 +5,7 @@ export class SupprimerCandidat {
     constructor(private readonly candidatRepository: ICandidatRepository) {
     }
 
-    async execute(candidatId: number): Promise<number> {
+    async execute(candidatId: String): Promise<number> {
         return await this.candidatRepository.delete(candidatId);
     }
 }
