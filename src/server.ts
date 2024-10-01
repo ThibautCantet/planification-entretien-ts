@@ -5,7 +5,7 @@ const app: Application = express();
 const server: Server = new Server(app);
 const PORT: number = process.env.PORT ? parseInt(process.env.PORT, 10) : 8080;
 
-//start(app, server, PORT)
+start(app, server, PORT)
 
 export function start(app: Application, server: Server, port: number) {
     return app

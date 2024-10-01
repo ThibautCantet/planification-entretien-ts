@@ -1,7 +1,7 @@
-import candidatRepository from '../../src/infrastructure/repositories/candidat.repository';
+import candidatRepository from '../../src/infrastructure/repositories/candidat.repository.mongo';
 import { start } from '../../src/server';
 import express, { Application } from "express";
-import Server from '../../src';
+import Server, { CandidatModel } from '../../src';
 import { Candidat } from '../../src/domain/candidat.domain';
 
 const app: Application = express();
@@ -135,7 +135,7 @@ describe("Candidat", () => {
     it("Ne trouve pas un candidat inexistant", async () => {
         // when
         const response = await request(app)
-            .get('/api/candidat/-42');
+            .get('/api/candidat/66fc61c66a450d010406cd42');
 
         // then
         expect(response.statusCode).toBe(404);
@@ -159,7 +159,7 @@ describe("Candidat", () => {
     it("Ne supprime pas un candidat inexistant", async () => {
         // when
         const response = await request(app)
-            .delete('/api/candidat/-42');
+            .delete('/api/candidat/66fc61c66a450d010406cd42');
 
         // then
         expect(response.statusCode).toBe(404);
@@ -186,7 +186,7 @@ describe("Candidat", () => {
     it("Ne met pas à jour un candidat inexistant", async () => {
         // when
         const response = await request(app)
-            .put('/api/candidat/-42')
+            .put('/api/candidat/66fc61c66a450d010406cd42')
             .send({langage: "c#"})
             .set('Content-Type', 'application/json')
             .set('Accept', 'application/json');

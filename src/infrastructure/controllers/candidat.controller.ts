@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { Candidat } from '../../domain/candidat.domain';
-import candidatRepository from '../repositories/candidat.repository';
+import candidatRepository from '../repositories/candidat.repository.mongo';
 import { SupprimerTousLesCandidats } from '../../use_case/candidat.toutsupprimer';
 import { CreerCandidat } from '../../use_case/candidat.creer';
 import { ListerCandidats } from '../../use_case/candidat.lister';
@@ -19,6 +19,7 @@ export default class CandidatController {
   async create(req: Request, res: Response) {
     try {
       const candidat: Candidat = req.body;
+      this.creerCandidat = new CreerCandidat(candidatRepository);
       const resultat = await this.creerCandidat.execute(candidat);
 
       if (resultat.code === 'ok') {
@@ -38,6 +39,7 @@ export default class CandidatController {
     const langage = typeof req.query.langage === "string" ? req.query.langage : "";
 
     try {
+      this.listerCandidat = new ListerCandidats(candidatRepository);
       const candidats = await this.listerCandidat.execute({ email: langage });
 
       res.status(200).send(candidats);
@@ -52,6 +54,7 @@ export default class CandidatController {
     const id: String = req.params.id;
 
     try {
+      this.trouverCandidat = new TrouverCandidat(candidatRepository);
       const candidat = await this.trouverCandidat.execute(id);
 
       if (candidat) res.status(200).send(candidat);
@@ -71,6 +74,7 @@ export default class CandidatController {
     candidat.id = req.params.id;
 
     try {
+      this.majCandidat = new MettreAJourCandidat(candidatRepository);
       const num = await this.majCandidat.execute(candidat);
 
       if (num == 1) {
@@ -93,6 +97,7 @@ export default class CandidatController {
     const id: String = req.params.id;
 
     try {
+      this.supprimerCandidat = new SupprimerCandidat(candidatRepository);
       const num = await this.supprimerCandidat.execute(id);
 
       if (num == 1) {
@@ -113,6 +118,7 @@ export default class CandidatController {
 
   async deleteAll(req: Request, res: Response) {
     try {
+      this.supprimerTousLesCandidats = new SupprimerTousLesCandidats(candidatRepository);
       const num = await this.supprimerTousLesCandidats.execute();
 
       res.status(204).send({ message: `${num} Candidats were deleted successfully!` });

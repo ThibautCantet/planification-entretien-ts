@@ -10,3 +10,13 @@ services:
       - POSTGRES_DB=testdb
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123
+
+  mongo:
+    ports:
+      - '27017:27017'
+    container_name: dkrcomp-mongo
+    restart: always
+    logging:
+      options:
+        max-size: 1g
+    image: mongo

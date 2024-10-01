@@ -1,7 +1,8 @@
 import express, { Application } from "express";
 import cors, { CorsOptions } from "cors";
 import Routes from "./infrastructure/routes";
-import Database from "./infrastructure/db";
+import mongoose, { Schema } from 'mongoose';
+import Database from './infrastructure/db';
 
 export default class Server {
   constructor(app: Application) {
@@ -23,5 +24,23 @@ export default class Server {
   private syncDatabase(): void {
     const db = new Database();
     db.sequelize?.sync();
+
+    mongoose.connect('mongodb://localhost/test', {
+    });
+
+    const mongoDb = mongoose.connection;
+    mongoDb.on('error', console.error.bind(console, 'MongoDB connection error:'));
+    mongoDb.once('open', function() {
+      // we're connected!
+      console.log('Connected to the mongo db database.');
+    });
   }
 }
+
+const candidatSchema: Schema = new Schema({
+  langage: { type: String, required: true },
+  email: { type: String, required: true },
+  xp: { type: Number, required: true }
+});
+
+export const CandidatModel = mongoose.model('Candidat', candidatSchema);
