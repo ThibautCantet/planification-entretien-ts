@@ -179,7 +179,7 @@ describe("Candidat", () => {
         // then
         expect(response.statusCode).toBe(204);
 
-        const candidat = await candidatRepository.retrieveById(id || 0);
+        const candidat = await candidatRepository.retrieveById(id);
         expect(candidat?.langage).toBe('c#');
     });
 

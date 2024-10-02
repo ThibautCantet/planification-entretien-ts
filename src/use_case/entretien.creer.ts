@@ -47,7 +47,7 @@ export class CreerEntretien {
             };
         }
 
-        const e = new Entretien(0, horaire, entretien.candidatId, entretien.recruteurId);
+        const e = new Entretien(0, candidat, recruteur, horaire);
         const resultat = e.planifier(candidat, recruteur);
         if (resultat.code != Creation.OK) {
             return resultat

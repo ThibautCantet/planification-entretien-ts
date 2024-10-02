@@ -259,6 +259,8 @@ describe('Entretien', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body.candidatId).toEqual(candidatId);
         expect(response.body.recruteurId).toEqual(recruteurId);
+        expect(response.body.candidatEmail).toEqual('candidat@mail.com');
+        expect(response.body.recruteurEmail).toEqual('recruteur@mail.com');
         expect(response.body.horaire).toEqual('2024-05-31T18:00:00.000Z');
     });
 
@@ -366,6 +368,8 @@ describe('Entretien', () => {
         expect(response.statusCode).toBe(200);
         expect(response.body[0].candidatId).toEqual(candidatId);
         expect(response.body[0].recruteurId).toEqual(recruteurId);
+        expect(response.body[0].candidatEmail).toEqual('candidat@mail.com');
+        expect(response.body[0].recruteurEmail).toEqual('recruteur@mail.com');
         expect(response.body[0].horaire).toEqual('2024-05-31T18:00:00.000Z');
     });
 

@@ -3,20 +3,22 @@ import { Candidat } from './candidat.domain';
 import { Creation } from '../use_case/entretien.creer';
 
 export class Entretien {
-    constructor(id: number,
-                horaire: string,
-                candidatId: number,
-                recruteurId: number) {
+
+    constructor(id: number, candidat: Candidat, recruteur: Recruteur, horaire: string) {
         this.id = id;
+        this.candidatId = candidat.id;
+        this.recruteurId = recruteur.id;
         this.horaire = horaire;
-        this.candidatId = candidatId;
-        this.recruteurId = recruteurId;
+        this.candidatEmail = candidat.email;
+        this.recruteurEmail = recruteur.email;
     }
 
     id: number;
     horaire: string;
-    candidatId: number;
+    candidatId: string;
     recruteurId: number;
+    candidatEmail: string;
+    recruteurEmail: string;
 
     planifier(candidat: Candidat, recruteur: Recruteur): any {
         if (recruteur.langage && candidat?.langage && recruteur.langage != candidat.langage) {
