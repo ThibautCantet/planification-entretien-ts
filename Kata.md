@@ -111,3 +111,69 @@ Nommer les méthodes publiques des use case `execute`
 
 # 11) Notification
 Extraire une interface `INotificationService` et injecter la dans `CreerEntretien`
+
+# 12) Entretien: encapsuler les règles métier (optionnel)
+Créer une méthode `planifier` dans la classe Entretien qui prend en paramètre un `Candidat` et un `Recruteur` et retourne si l'entretien est planifiable.
+
+# 13) Interface entretien (optionnel)
+Le use case retourne maintenant une instance de `Entretien` qui possède des méthodes métiers.
+
+Extraire une interface qui sera retournée par le use case.
+
+# 14) Autre implémemtation (optionnel)
+Faire une autre implémentation du repository `ICandidatResitory`. Par exemple, une implémentation en mémoire, MongoDB...
+
+# 15) Candidat : validation
+### 15.1) Validation
+Encaspuler les règles de validations pour la création d'un candidat
+
+### 15.2) Validation non neosoft.fr
+Rajouter un test qui s'assure qu'un candidat ne peut pas avoir un email se terminant par `neosoft.fr`.
+Implémenter la règle.
+
+# 16) Recruteur : validation
+### 16.1) Validation
+Encaspuler les règles de validations pour la création d'un recruteur
+
+### 16.2) Validation non neosoft.fr
+Rajouter un test qui s'assure qu'un recruteur a bien un email se terminant par `neosoft.fr`.
+Implémenter la règle.
+
+# 17) GET entretiens
+Le end point `/entretiens/:id` doit retourner en plus les emails du candidat et du recruteur.
+
+Compléter le test unitaire :
+dans `Trouve un entretien existant`
+```typescript
+
+expect(response.body.candidatEmail).toEqual('candidat@mail.com');
+expect(response.body.recruteurEmail).toEqual('recruteur@mail.com');
+```
+
+Attention, le endpoint `/entretiens` ne doit pas être impacté.
+
+Modifier `Recruteur` pour exposer les 2 emails.
+Il faut dans le repository `EntretienRepository` récupérer les 2 emails.
+
+# 17) Etats d'un entretien
+Créer des use cases permettant de `valider`, `terminer` et `annuler` un entretien.
+
+Un entretien ne peut être `annulé` que s'il est déjà `terminé`.
+
+Un entretien ne peut être `terminé` que s'il est `annulé`.
+
+
+# 15) Payer un entretien
+Un entretien ouvre droit à un paiement de 100€ pour le recruteur lorsque celui-ci est terminé.
+
+Créer un use case `PayerEntretien` qui prend en paramètre l'id d'un `Entretien` existant et qui incrémente le nombre d'entretien effectué par le recruteur et alimente un tableau de bord permettant de visualier le top 3 des recruteurs.
+
+Ecrivez un test unitaire permettant de valider :
+- le paiement pour le recruteur
+- la mise à jour du teableau de bord
+
+### Bonus
+Lorsqu'un recruteur valide un premier entretien, alors il reçoit une email de bienvenue dans la communauté des recruteurs.
+Lorsqu'un recruteur valide un troisième entretien, alors il reçoit un SMS de félicitation.
+
+Ecrire des tests unitaires pour ces 2 use cases.
