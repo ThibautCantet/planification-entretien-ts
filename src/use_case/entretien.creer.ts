@@ -47,18 +47,10 @@ export class CreerEntretien {
             };
         }
 
-        if (recruteur.langage && candidat?.langage && recruteur.langage != candidat.langage) {
-            return {
-                code: Creation.PAS_COMPATIBLE,
-                message: "Pas la même techno"
-            };
-        }
-
-        if (recruteur?.xp && candidat?.xp && recruteur.xp < candidat.xp) {
-            return {
-                code: Creation.PAS_COMPATIBLE,
-                message: "Recruteur trop jeune"
-            };
+        const e = new Entretien(0, horaire, entretien.candidatId, entretien.recruteurId);
+        const resultat = e.planifier(candidat, recruteur);
+        if (resultat.code != Creation.OK) {
+            return resultat
         }
 
         const savedEntretien = await this.entretienRepository.save(entretien);
