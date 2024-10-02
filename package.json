@@ -4,7 +4,7 @@
   "description": "Rest API using Node.js, TypeScript ORM Sequelize, Express, Postgres",
   "main": "src/server.ts",
   "scripts": {
-    "test": "jest -i --detectOpenHandles",
+    "test": "jest -i --detectOpenHandles --runInBand",
     "build": "tsc",
     "dev": "node ./build/src/server.js",
     "start": "tsc && npm run dev"
